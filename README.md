@@ -1,2 +1,2 @@
 # PA
-Applied algorithm repository for university
+Applied algorithms repository for university
