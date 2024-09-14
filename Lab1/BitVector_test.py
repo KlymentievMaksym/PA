@@ -79,7 +79,7 @@ class TestBitVectorSet(unittest.TestCase):
 
         test_bit_vector1.sym_difference(test_bit_vector2)
 
-        self.assertEqual(test_bit_vector1.bits, [12] + [0] * 999)
+        self.assertEqual(test_bit_vector1.bits, [24] + [0] * 999)
 
     def test_is_subset(self):
         test_bit_vector1 = BitVectorSet(1, 2, 3)

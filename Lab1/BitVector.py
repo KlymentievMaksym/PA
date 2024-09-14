@@ -59,12 +59,17 @@ class BitVectorSet:
         old_bit_vector_set = self.bits.copy()
 
         for bit_vector_number in range(self.size):
-            self.bits[bit_vector_number] = self.bits[bit_vector_number] & other.bits[bit_vector_number]
+            self.bits[bit_vector_number] = self.bits[bit_vector_number] & ~other.bits[bit_vector_number]
 
         return old_bit_vector_set
 
     def sym_difference(self, other: 'BitVectorSet'):
-        raise NotImplementedError
+        old_bit_vector_set = self.bits.copy()
+
+        for bit_vector_number in range(self.size):
+            self.bits[bit_vector_number] = self.bits[bit_vector_number] ^ other.bits[bit_vector_number]
+
+        return old_bit_vector_set
 
     def is_subset(self, other: 'BitVectorSet'):
         raise NotImplementedError
