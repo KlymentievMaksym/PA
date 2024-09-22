@@ -102,20 +102,52 @@ class UndirectedGraph(Graph):
 
 
 class DirectedGraph(Graph):
-    def convertator(self, type_of_realization: str):
-        raise NotImplementedError
+    def convertator(self, type_of_realization: str, *args):
+        super().convertator(type_of_realization, *args)
+        if type_of_realization == 'matrix':
+            length = len(args[0].items())
+            matrix_to_return = [[0 for _ in range(length)] for _ in range(length)]
+            for vertex, vertices_connected in args[0].items():
+                for vertex_second in vertices_connected:
+                    matrix_to_return[vertex][vertex_second] = 1
+            return matrix_to_return
+
+        elif type_of_realization == 'list':
+            if len(args) == 0:
+                matrix = self.graph
+            else:
+                matrix = args[0]
+            dict_of_lists_to_return = {}
+            for vertex in range(self.number_of_vertices):
+                dict_of_lists_to_return[vertex] = []
+                for vertex_second in range(self.number_of_vertices):
+                    if matrix[vertex][vertex_second] != 0:
+                        dict_of_lists_to_return[vertex].append(vertex_second)
+            return dict_of_lists_to_return
 
     def add_vertex(self, v: int):
-        raise NotImplementedError
+        super().add_vertex(v)
+        temp_dict = self.convertator('list')
+        temp_dict[v] = temp_dict.get(v, [])
+        self.graph = self.convertator('matrix', temp_dict)
+        self.number_of_vertices += 1
 
     def add_edge(self, v1: int, v2: int):
-        raise NotImplementedError
+        super().add_edge(v1, v2)
+        self.graph[v1][v2] = 1
 
     def remove_vertex(self, v: int):
-        raise NotImplementedError
+        super().remove_vertex(v)
+        temp_dict = self.convertator('list')
+        items = temp_dict.pop(v)
+        # for item in items:
+        #     temp_dict[item].remove(v)
+        self.graph = self.convertator('matrix', temp_dict)
+        self.number_of_vertices -= 1
 
     def remove_edge(self, v1: int, v2: int):
-        raise NotImplementedError
+        super().remove_edge(v1, v2)
+        self.graph[v1][v2] = 0
 
 
 class WeightedGraph(Graph):

@@ -42,7 +42,33 @@ class TestGraph(unittest.TestCase):
         self.assertEqual(graph_undirected.graph, [[0]*5]*5)
 
     def test_init_directed_graph(self):
-        raise NotImplementedError
+        graph_directed = DirectedGraph(5)
+
+        self.assertEqual(graph_directed.graph, [[0]*5]*5)
+
+    def test_add_vertex_directed_graph(self):
+        graph_directed = DirectedGraph(5)
+
+        graph_directed.add_vertex(5)
+
+        self.assertEqual(graph_directed.graph, [[0]*6]*6)
+
+    def test_add_edge_directed_graph(self):
+        excepted = [[0 for _ in range(5)] for _ in range(5)]
+        excepted[0][1] = 1
+        graph_directed = DirectedGraph(5)
+
+        graph_directed.add_edge(0, 1)
+
+        self.assertEqual(graph_directed.graph, excepted)
+
+    def test_remove_vertex_directed_graph(self):
+        graph_directed = DirectedGraph(5)
+
+        graph_directed.add_edge(0, 1)
+        graph_directed.remove_vertex(0)
+
+        self.assertEqual(graph_directed.graph, [[0]*4]*4)
 
     def test_init_weighted_graph_undirected(self):
         raise NotImplementedError
