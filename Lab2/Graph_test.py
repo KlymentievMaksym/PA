@@ -4,17 +4,42 @@ from Graph import *
 
 class TestGraph(unittest.TestCase):
     def test_init_undirected_graph(self):
-        graph = UndirectedGraph(5)
-        items = (
-            {'case': 'Adding a vertex', 'method': graph.add_vertex,'v': [5], 'expected': 1},
-            {'case': 'Adding an edge', 'method': graph.add_edge,'v': [1, 2], 'expected': 1},
-            {'case': 'Removing a vertex', 'method': graph.remove_vertex,'v': [1], 'expected': 0},
-            {'case': 'Removing an edge', 'method': graph.remove_edge,'v': [1, 2], 'expected': 0},
-        )
-        for item in items:
-            with self.subTest(item['case']):
-                result = item['method'](*item['v'])
-                self.assertEqual(result, item['expected'])
+        graph_undirected = UndirectedGraph(5)
+
+        self.assertEqual(graph_undirected.graph, [[0]*5]*5)
+
+    def test_add_vertex_undirected_graph(self):
+        graph_undirected = UndirectedGraph(5)
+
+        graph_undirected.add_vertex(5)
+
+        self.assertEqual(graph_undirected.graph, [[0]*6]*6)
+
+    def test_add_edge_undirected_graph(self):
+        excepted = [[0 for _ in range(5)] for _ in range(5)]
+        excepted[0][1] = 1
+        excepted[1][0] = 1
+        graph_undirected = UndirectedGraph(5)
+
+        graph_undirected.add_edge(0, 1)
+
+        self.assertEqual(graph_undirected.graph, excepted)
+
+    def test_remove_vertex_undirected_graph(self):
+        graph_undirected = UndirectedGraph(5)
+
+        graph_undirected.add_edge(0, 1)
+        graph_undirected.remove_vertex(0)
+
+        self.assertEqual(graph_undirected.graph, [[0]*4]*4)
+
+    def test_remove_edge_undirected_graph(self):
+        graph_undirected = UndirectedGraph(5)
+
+        graph_undirected.add_edge(0, 1)
+        graph_undirected.remove_edge(0, 1)
+
+        self.assertEqual(graph_undirected.graph, [[0]*5]*5)
 
     def test_init_directed_graph(self):
         raise NotImplementedError
