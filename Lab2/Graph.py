@@ -27,7 +27,7 @@ class Graph:
         if v < 0:
             raise ValueError(f"Vertex {v} can't be negative")
 
-    def add_edge(self, v1: int, v2: int):
+    def add_edge(self, v1: int, v2: int, weight: int):
         if not isinstance(v1, int) or not isinstance(v2, int):
             raise TypeError(f"Either vertex {v1} or {v2} is not an integer")
         if v1 < 0 or v2 < 0:
@@ -81,10 +81,10 @@ class UndirectedGraph(Graph):
         self.graph = self.convertator('matrix', temp_dict)
         self.number_of_vertices += 1
 
-    def add_edge(self, v1: int, v2: int):
-        super().add_edge(v1, v2)
-        self.graph[v1][v2] = 1
-        self.graph[v2][v1] = 1
+    def add_edge(self, v1: int, v2: int, weight: int = 1):
+        super().add_edge(v1, v2, weight)
+        self.graph[v1][v2] = weight
+        self.graph[v2][v1] = weight
 
     def remove_vertex(self, v: int):
         super().remove_vertex(v)
@@ -132,14 +132,16 @@ class DirectedGraph(Graph):
         self.graph = self.convertator('matrix', temp_dict)
         self.number_of_vertices += 1
 
-    def add_edge(self, v1: int, v2: int):
-        super().add_edge(v1, v2)
-        self.graph[v1][v2] = 1
+    def add_edge(self, v1: int, v2: int, weight: int = 1):
+        super().add_edge(v1, v2, weight)
+        self.graph[v1][v2] = weight
 
     def remove_vertex(self, v: int):
         super().remove_vertex(v)
         temp_dict = self.convertator('list')
+        print(temp_dict)
         items = temp_dict.pop(v)
+        print(temp_dict)
         # for item in items:
         #     temp_dict[item].remove(v)
         self.graph = self.convertator('matrix', temp_dict)
@@ -150,48 +152,36 @@ class DirectedGraph(Graph):
         self.graph[v1][v2] = 0
 
 
-class WeightedGraph(Graph):
-    def __new__(cls, type_of_graph):
-        if cls is not WeightedGraph:
-            return super().__new__(cls)
-        class_map = {
-            'Undirected': WeightedGraphUndirected, 
-            'Directed': WeightedGraphDirected
-            }
-        cls = class_map[type_of_graph]
-        return super().__new__(cls, type_of_graph)
-
-
-class WeightedGraphUndirected(WeightedGraph, UndirectedGraph):
-    def add_edge(self, v1, v2, weight):
+class WeightedGraphUndirected(UndirectedGraph):
+    def add_edge(self, v1: int, v2: int, weight: int):
         super().add_edge(v1, v2, weight)
 
-    def remove_edge(self, v1, v2):
+    def remove_edge(self, v1: int, v2: int):
         super().remove_edge(v1, v2)
 
-    def add_vertex(self, v):
+    def add_vertex(self, v: int):
         super().add_vertex(v)
 
-    def remove_vertex(self, v):
+    def remove_vertex(self, v: int):
         super().remove_vertex(v)
 
 
-class WeightedGraphDirected(WeightedGraph, DirectedGraph):
-    def add_edge(self, v1, v2, weight):
+class WeightedGraphDirected(DirectedGraph):
+    def add_edge(self, v1: int, v2: int, weight: int):
         super().add_edge(v1, v2, weight)
 
-    def remove_edge(self, v1, v2):
+    def remove_edge(self, v1: int, v2: int):
         super().remove_edge(v1, v2)
 
-    def add_vertex(self, v):
+    def add_vertex(self, v: int):
         super().add_vertex(v)
 
-    def remove_vertex(self, v):
+    def remove_vertex(self, v: int):
         super().remove_vertex(v)
 
 
 if __name__ == '__main__':
     undirected_graph = UndirectedGraph(5)
     directed_graph = DirectedGraph(5)
-    weighted_graph_dn = WeightedGraph('Undirected')(5)
-    weighted_graph_d = WeightedGraph('Directed')(5)
+    weighted_graph_dn = WeightedGraphUndirected(5)
+    weighted_graph_d = WeightedGraphDirected(5)
