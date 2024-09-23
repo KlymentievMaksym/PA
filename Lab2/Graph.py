@@ -137,7 +137,6 @@ class Graph:
         radius = self.number_of_vertices
         figure, ax = plt.subplots()
         temp_dict = self.convertator('list')
-        print(temp_dict)
         angles = np.linspace(0, 2 * np.pi, radius, endpoint=False)
 
         x = np.cos(angles)
