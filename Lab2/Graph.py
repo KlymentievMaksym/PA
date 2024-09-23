@@ -21,17 +21,45 @@ class Graph:
             if type_of_realization != 'list':
                 raise IndexError("No arguments can only be used with 'list' realization")
 
+        if type_of_realization == 'matrix':
+            length = len(args[0].items())
+            matrix_to_return = [[0 for _ in range(length)] for _ in range(length)]
+            for vertex, vertices_connected in args[0].items():
+                for vertex_second in vertices_connected:
+                    matrix_to_return[vertex][vertex_second] = 1
+            return matrix_to_return
+
+        elif type_of_realization == 'list':
+            if len(args) == 0:
+                matrix = self.graph
+            else:
+                matrix = args[0]
+            dict_of_lists_to_return = {}
+            for vertex in range(self.number_of_vertices):
+                dict_of_lists_to_return[vertex] = []
+                for vertex_second in range(self.number_of_vertices):
+                    if matrix[vertex][vertex_second] != 0:
+                        dict_of_lists_to_return[vertex].append(vertex_second)
+            return dict_of_lists_to_return
+
     def add_vertex(self, v: int):
         if not isinstance(v, int):
             raise TypeError(f"Vertex {v} is not an integer")
         if v < 0:
             raise ValueError(f"Vertex {v} can't be negative")
 
-    def add_edge(self, v1: int, v2: int, weight: int):
+        temp_dict = self.convertator('list')
+        temp_dict[v] = temp_dict.get(v, [])
+        self.graph = self.convertator('matrix', temp_dict)
+        self.number_of_vertices += 1
+
+    def add_edge(self, v1: int, v2: int, weight: int, cls: 'Graph'):
         if not isinstance(v1, int) or not isinstance(v2, int):
             raise TypeError(f"Either vertex {v1} or {v2} is not an integer")
         if v1 < 0 or v2 < 0:
             raise ValueError(f"Neither {v1}, nor {v2} can be negative")
+        if (cls.__class__.__name__ == 'UndirectedGraph' or cls.__class__.__name__ == 'DirectedGraph') and weight != 1:
+            raise ValueError(f"Weight can be only 1 in {cls.__class__.__name__}")
 
     def remove_vertex(self, v: int):
         if not isinstance(v, int):
@@ -40,6 +68,14 @@ class Graph:
             raise ValueError(f"Vertex {v} can't be negative")
         if v >= self.number_of_vertices:
             raise ValueError(f"Vertex {v} doesn't exist")
+
+        temp_dict = self.convertator('list')
+        items = temp_dict.pop(v)
+        for item in items:
+            if v in temp_dict[item]:
+                temp_dict[item].remove(v)
+        self.graph = self.convertator('matrix', temp_dict)
+        self.number_of_vertices -= 1
 
     def remove_edge(self, v1: int, v2: int):
         if not isinstance(v1, int) or not isinstance(v2, int):
@@ -51,49 +87,10 @@ class Graph:
 
 
 class UndirectedGraph(Graph):
-    def convertator(self, type_of_realization: str, *args):
-        super().convertator(type_of_realization, *args)
-        if type_of_realization == 'matrix':
-            length = len(args[0].items())
-            matrix_to_return = [[0 for _ in range(length)] for _ in range(length)]
-            for vertex, vertices_connected in args[0].items():
-                for vertex_second in vertices_connected:
-                    matrix_to_return[vertex][vertex_second] = 1
-            return matrix_to_return
-
-        elif type_of_realization == 'list':
-            if len(args) == 0:
-                matrix = self.graph
-            else:
-                matrix = args[0]
-            dict_of_lists_to_return = {}
-            for vertex in range(self.number_of_vertices):
-                dict_of_lists_to_return[vertex] = []
-                for vertex_second in range(self.number_of_vertices):
-                    if matrix[vertex][vertex_second] != 0:
-                        dict_of_lists_to_return[vertex].append(vertex_second)
-            return dict_of_lists_to_return
-
-    def add_vertex(self, v: int):
-        super().add_vertex(v)
-        temp_dict = self.convertator('list')
-        temp_dict[v] = temp_dict.get(v, [])
-        self.graph = self.convertator('matrix', temp_dict)
-        self.number_of_vertices += 1
-
     def add_edge(self, v1: int, v2: int, weight: int = 1):
-        super().add_edge(v1, v2, weight)
+        super().add_edge(v1, v2, weight, self)
         self.graph[v1][v2] = weight
         self.graph[v2][v1] = weight
-
-    def remove_vertex(self, v: int):
-        super().remove_vertex(v)
-        temp_dict = self.convertator('list')
-        items = temp_dict.pop(v)
-        for item in items:
-            temp_dict[item].remove(v)
-        self.graph = self.convertator('matrix', temp_dict)
-        self.number_of_vertices -= 1
 
     def remove_edge(self, v1: int, v2: int):
         super().remove_edge(v1, v2)
@@ -102,50 +99,9 @@ class UndirectedGraph(Graph):
 
 
 class DirectedGraph(Graph):
-    def convertator(self, type_of_realization: str, *args):
-        super().convertator(type_of_realization, *args)
-        if type_of_realization == 'matrix':
-            length = len(args[0].items())
-            matrix_to_return = [[0 for _ in range(length)] for _ in range(length)]
-            for vertex, vertices_connected in args[0].items():
-                for vertex_second in vertices_connected:
-                    matrix_to_return[vertex][vertex_second] = 1
-            return matrix_to_return
-
-        elif type_of_realization == 'list':
-            if len(args) == 0:
-                matrix = self.graph
-            else:
-                matrix = args[0]
-            dict_of_lists_to_return = {}
-            for vertex in range(self.number_of_vertices):
-                dict_of_lists_to_return[vertex] = []
-                for vertex_second in range(self.number_of_vertices):
-                    if matrix[vertex][vertex_second] != 0:
-                        dict_of_lists_to_return[vertex].append(vertex_second)
-            return dict_of_lists_to_return
-
-    def add_vertex(self, v: int):
-        super().add_vertex(v)
-        temp_dict = self.convertator('list')
-        temp_dict[v] = temp_dict.get(v, [])
-        self.graph = self.convertator('matrix', temp_dict)
-        self.number_of_vertices += 1
-
     def add_edge(self, v1: int, v2: int, weight: int = 1):
-        super().add_edge(v1, v2, weight)
+        super().add_edge(v1, v2, weight, self)
         self.graph[v1][v2] = weight
-
-    def remove_vertex(self, v: int):
-        super().remove_vertex(v)
-        temp_dict = self.convertator('list')
-        print(temp_dict)
-        items = temp_dict.pop(v)
-        print(temp_dict)
-        # for item in items:
-        #     temp_dict[item].remove(v)
-        self.graph = self.convertator('matrix', temp_dict)
-        self.number_of_vertices -= 1
 
     def remove_edge(self, v1: int, v2: int):
         super().remove_edge(v1, v2)
@@ -153,31 +109,11 @@ class DirectedGraph(Graph):
 
 
 class WeightedGraphUndirected(UndirectedGraph):
-    def add_edge(self, v1: int, v2: int, weight: int):
-        super().add_edge(v1, v2, weight)
-
-    def remove_edge(self, v1: int, v2: int):
-        super().remove_edge(v1, v2)
-
-    def add_vertex(self, v: int):
-        super().add_vertex(v)
-
-    def remove_vertex(self, v: int):
-        super().remove_vertex(v)
+    pass
 
 
 class WeightedGraphDirected(DirectedGraph):
-    def add_edge(self, v1: int, v2: int, weight: int):
-        super().add_edge(v1, v2, weight)
-
-    def remove_edge(self, v1: int, v2: int):
-        super().remove_edge(v1, v2)
-
-    def add_vertex(self, v: int):
-        super().add_vertex(v)
-
-    def remove_vertex(self, v: int):
-        super().remove_vertex(v)
+    pass
 
 
 if __name__ == '__main__':
