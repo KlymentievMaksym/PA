@@ -34,9 +34,17 @@ class UnionFindTable:
             if value not in values_used:
                 values_used.append(value)
                 number = self.list[value]
+                k = 0
                 while number != 0:
+                    # print(number, k)
+                    if number == self.next[self.list[value]-1]:
+                        k += 1
+                        if k >= 2:
+                            print('Break because loop is happening...')
+                            break
                     single_set.append(number)
                     number = self.next[number-1]
+                # print(number, k)
             sets.append(single_set)
         return sets
 
