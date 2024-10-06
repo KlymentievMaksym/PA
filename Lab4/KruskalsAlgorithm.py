@@ -49,4 +49,4 @@ class KruskalsAlgorithm:
 
 if __name__ == '__main__':
     kruskal = KruskalsAlgorithm(5)
-    print(kruskal.start())
+    print(kruskal.start(True))

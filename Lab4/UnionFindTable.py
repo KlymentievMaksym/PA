@@ -86,8 +86,8 @@ class UnionFindTable:
 if __name__ == '__main__':  # pragma: no cover
     uf = UnionFindTable([[1, 3, 5, 7], [2, 4, 8], [6]])
     uf.print()
-    uf.union(1, 2)
-    uf.print()
+    uf.union(1, 2).print()
+    # uf.print()
     # uf = UnionFindTable(uf.make_sets())
     # uf.union(1, 2)
     uf.union(1, 3)
