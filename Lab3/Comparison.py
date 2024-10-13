@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+from pandas.plotting import table
 import matplotlib.pyplot as plt
 import time
 
@@ -79,8 +81,8 @@ class Comparer:
 
 
 if __name__ == '__main__':
-    numbers = 100
-    step = 10
+    numbers = 26
+    step = 5
     samples = 100
 
     numbers_range = np.arange(5, numbers + 1, step)
@@ -125,3 +127,19 @@ if __name__ == '__main__':
         axe_bfs.set_title(f"BFS {int(probabilities[probability_index]*100)}%")
     plt.tight_layout()
     plt.show()
+
+    # ax = plt.axes()
+
+    # axe_dfs = ax
+    # dfs_by = np.array([np.array(dfs_by_range)[:, 0]])
+    # for probability_index in range(1, len(probabilities)):
+    #     dfs_by = np.concatenate((dfs_by, np.array([np.array(dfs_by_range)[:, probability_index]])), axis=0)
+    # data_dfs = pd.DataFrame(dfs_by, index=probabilities, columns=numbers_range)
+    # # print(data_dfs)
+    # axe_dfs.axis('off')
+    # table(axe_dfs, data_dfs[[]], loc='center', cellLoc='center')
+    # # axe_dfs.show()
+    # # axe_dfs
+    # axe_dfs.set_title('DFS')
+    # plt.tight_layout()
+    # plt.show()
