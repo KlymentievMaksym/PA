@@ -81,7 +81,7 @@ class Comparer:
 
 
 if __name__ == '__main__':
-    numbers = 26
+    numbers = 75
     step = 5
     samples = 100
 
@@ -113,33 +113,35 @@ if __name__ == '__main__':
         dfs_by_range.append(dfs_by_probability)
         bfs_by_range.append(bfs_by_probability)
 
-    fig, ax = plt.subplots(2, len(probabilities), sharey=True, figsize=(20, 5))
+    fig, ax = plt.subplots(1, len(probabilities), sharey=True, figsize=(20, 5))
     for probability_index in range(len(probabilities)):
         times_dfs = np.array(dfs_by_range)[:, probability_index]
         times_bfs = np.array(bfs_by_range)[:, probability_index]
-
-        axe_dfs = ax[0, probability_index]
-        axe_dfs.plot(numbers_range, times_dfs)
-        axe_dfs.set_title(f"DFS {int(probabilities[probability_index]*100)}%")
-
-        axe_bfs = ax[1, probability_index]
-        axe_bfs.plot(numbers_range, times_bfs)
-        axe_bfs.set_title(f"BFS {int(probabilities[probability_index]*100)}%")
+        ax[probability_index].plot(numbers_range, times_dfs, label=f"DFS")
+        ax[probability_index].plot(numbers_range, times_bfs, label=f"BFS")
+        ax[probability_index].legend()
+        ax[probability_index].set_title(f"Probability: {int(probabilities[probability_index]*100)}%")
     plt.tight_layout()
     plt.show()
 
-    # ax = plt.axes()
+    dfs_by = np.array([np.array(dfs_by_range)[:, 0]])
+    for probability_index in range(1, len(probabilities)):
+        dfs_by = np.concatenate((dfs_by, np.array([np.array(dfs_by_range)[:, probability_index]])), axis=0)
+    data_dfs = pd.DataFrame(dfs_by, index=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], columns=numbers_range)
+    data_dfs = data_dfs*10**5
 
-    # axe_dfs = ax
-    # dfs_by = np.array([np.array(dfs_by_range)[:, 0]])
-    # for probability_index in range(1, len(probabilities)):
-    #     dfs_by = np.concatenate((dfs_by, np.array([np.array(dfs_by_range)[:, probability_index]])), axis=0)
-    # data_dfs = pd.DataFrame(dfs_by, index=probabilities, columns=numbers_range)
-    # # print(data_dfs)
-    # axe_dfs.axis('off')
-    # table(axe_dfs, data_dfs[[]], loc='center', cellLoc='center')
-    # # axe_dfs.show()
-    # # axe_dfs
-    # axe_dfs.set_title('DFS')
-    # plt.tight_layout()
-    # plt.show()
+    bfs_by = np.array([np.array(bfs_by_range)[:, 0]])
+    for probability_index in range(1, len(probabilities)):
+        bfs_by = np.concatenate((bfs_by, np.array([np.array(bfs_by_range)[:, probability_index]])), axis=0)
+    data_bfs = pd.DataFrame(bfs_by, index=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], columns=numbers_range)
+    data_bfs = data_bfs*10**5
+
+    import seaborn as sns
+
+    plt.figure(figsize=(50, 5))
+    sns.heatmap(data_dfs, annot=True, fmt=".1f")
+    plt.plot()
+
+    plt.figure(figsize=(50, 5))
+    sns.heatmap(data_bfs, annot=True, fmt=".1f")
+    plt.plot()
