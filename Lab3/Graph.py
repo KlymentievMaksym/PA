@@ -38,10 +38,7 @@ class Graph:
 
         for i in range(self.number_of_vertices):
             for j in range(i+1, self.number_of_vertices):
-                success = np.random.choice([True, False], p=[probability, 1 - probability])
-                if success:
+                if np.random.rand() < probability:
                     self.add_edge(i, j, weight)
-                else:
-                    self.remove_edge(i, j)
 
         return self.graph

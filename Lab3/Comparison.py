@@ -81,7 +81,7 @@ class Comparer:
 
 
 if __name__ == '__main__':
-    numbers = 75
+    numbers = 1000
     step = 5
     samples = 100
 
