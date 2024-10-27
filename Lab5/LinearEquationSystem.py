@@ -20,7 +20,7 @@ def lup_decomposition(matrix):
     u = Matrix([[0 for col in range(matrix.shape[1])] for row in range(matrix.shape[0])])
     p = Matrix([[0 for col in range(matrix.shape[1])] for row in range(matrix.shape[0])])
     for k in range(matrix.shape[0]):  # rows
-        ks = -999999999
+        ks = -float("inf")
         for i in range(k, matrix.shape[0]):  # rows
             if ks < abs(matrix[i][k]):
                 ks = abs(matrix[i][k])
@@ -37,7 +37,7 @@ def lup_decomposition(matrix):
 
     for row in range(matrix.shape[0]):  # Create l, u, p
         for col in range(matrix.shape[1]):
-            if row == pi[col]:
+            if col == pi[row]:
                 p[row][col] = 1
             if row <= col:
                 if row == col:
@@ -69,7 +69,6 @@ class LinearEquationSystem:
             for i in range(k + 1, self.matrix.shape[0]):
                 sum += u[k][i] * x[i][0]
             x[k] = [(y[k][0] - sum) / u[k][k]]
-        print(l, u, p, bs, y, x, sep='\n\n')
         return x
 
 
@@ -82,18 +81,6 @@ if __name__ == '__main__':
         [1, 5, 15, 35, 70, 126],
         [1, 6, 21, 56, 126, 252],
     ])
-    # m = Matrix([
-    #     [1, 2, 5, 9],
-    #     [3, 13, 18, 30],
-    #     [2, 4, 11, 16],
-    #     [1, 9, 9, 9]
-    # ])
-    # b = Matrix([
-    #     [79],
-    #     [263],
-    #     [146],
-    #     [92]
-    # ])
     m_copy = m.deepcopy()
     b = Matrix([
         [15],
@@ -109,5 +96,3 @@ if __name__ == '__main__':
     print("x.T: ", list(map(lambda x: round(x[0], 2), x)))
     print("\nCalculated b.T:", list(map(lambda x: round(x[0], 2), m_copy * x)), sep='\n')
     print("\nReal b.T:", b.T, sep='\n')
-    # print(les.solve())
-    # print(m, b)
