@@ -3,21 +3,7 @@
 # врахувати це в своїй реалізації. Класи повинні реалізовувати базові операції над матриця-
 # ми (додавання, віднімання, множення матриць; множення матриці на вектор)
 
-# Реалізувати алгоритм LUP-розкладу матриці.
-
-# Реалізувати алгоритм розв'язання системи ліні
-# них рівнянь за допомогою LUP-розкладу
-
-# Відкрити довільний підр:
-# учник з лінійної алгебри і знайти там задачі, в яких вимагається
-# розв'язати систему
-# лінійних рівнянь розмірами пе менше 6 х 6 (бажано 10 х 10 або ще
-# більше)
-
-# Розв'язати знайдену систему за допомогою вашої реалізації.
-
-# Перевірити знайдений розв'язок за допомогою системи WolframAlpha або аналогічної, якій
-# ми довіряємо більше, ніж нашим реалізація.
+from copy import copy as cp, deepcopy as dcp
 
 
 class Matrix:
@@ -25,7 +11,7 @@ class Matrix:
         self.matrix = matrix
         self.shape = (len(matrix), len(matrix[0]))
         if T is None:
-            self.T = Matrix([[self.matrix[col][row] for col in range(self.shape[0])] for row in range(self.shape[1])], self)
+            self.T = Matrix([[self.matrix[row][col] for row in range(self.shape[0])] for col in range(self.shape[1])], self)
         else:
             self.T = T
 
@@ -53,25 +39,43 @@ class Matrix:
             raise ValueError(f"Matrices must have compatible shapes, received {self.shape} and {other.shape}")
         return Matrix([[sum(self.matrix[row][i] * other.matrix[i][col] for i in range(self.shape[1])) for col in range(other.shape[1])] for row in range(self.shape[0])])
 
+    def __getitem__(self, index):
+        return self.matrix[index]
+
+    def __setitem__(self, index, value):
+        self.matrix[index] = value
+        self.T = Matrix([[self.matrix[row][col] for row in range(self.shape[0])] for col in range(self.shape[1])], self)
+
+    def copy(self):
+        return cp(self)
+
+    def deepcopy(self):
+        return dcp(self)
+
     def __str__(self):
         text = ''
         for row in self.matrix:
             text += str(row) + '\n'  # Print each row
-        return text  # .strip()
+        return text.strip()
 
 
 if __name__ == '__main__':
     m1 = Matrix([[1, 2], [3, 4]])
+    print("m1, m1.T", m1, m1.T, sep='\n')
+    m1[0], m1[1] = m1[1], m1[0]
+    print("m1, m1.T", m1, m1.T, sep='\n')
     m2 = Matrix([[1, 2], [3, 4]])
     m3 = Matrix([[1, 2, 3], [3, 4, 5], [5, 6, 7]])
     m4 = Matrix([[1, 2, 3], [3, 4, 5]])
     m5 = Matrix([[1, 2], [3, 4], [5, 6]])
     v1 = Matrix([[1, 2]])
+    v3 = Matrix([[2, 3]])
     v2 = Matrix([[1, 2, 3]])
-    print(m1 * v1.T)
-    print(m3 * v2.T)
-    print(m1 + m2)
-    print(m1 - m2)
-    print(m1 * m2)
-    print(m1 * 2)
-    print(m4 * m5)
+    print("v1.T * v3", v1.T * v3, sep='\n')
+    print("m1 * v1.T", m1 * v1.T, sep='\n')
+    print("m3 * v2.T", m3 * v2.T, sep='\n')
+    print("m1 + m2", m1 + m2, sep='\n')
+    print("m1 - m2", m1 - m2, sep='\n')
+    print("m1 * m2", m1 * m2, sep='\n')
+    print("m1 * 2", m1 * 2, sep='\n')
+    print("m4 * m5", m4 * m5, sep='\n')
