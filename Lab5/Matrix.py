@@ -7,13 +7,13 @@ from copy import copy as cp, deepcopy as dcp
 
 
 class Matrix:
-    def __init__(self, matrix: list[list[float]], T: 'Matrix' = None):
+    def __init__(self, matrix: list[list[float]]):
         self.matrix = matrix
         self.shape = (len(matrix), len(matrix[0]))
-        if T is None:
-            self.T = Matrix([[self.matrix[row][col] for row in range(self.shape[0])] for col in range(self.shape[1])], self)
-        else:
-            self.T = T
+
+    @property
+    def T(self) -> 'Matrix':
+        return Matrix([[self.matrix[row][col] for row in range(self.shape[0])] for col in range(self.shape[1])])
 
     def __add__(self, other: 'Matrix'):
         if other.__class__ != self.__class__:
@@ -44,7 +44,6 @@ class Matrix:
 
     def __setitem__(self, index, value):
         self.matrix[index] = value
-        self.T = Matrix([[self.matrix[row][col] for row in range(self.shape[0])] for col in range(self.shape[1])], self)
 
     def copy(self):
         return cp(self)
@@ -63,6 +62,7 @@ if __name__ == '__main__':
     m1 = Matrix([[1, 2], [3, 4]])
     print("m1, m1.T", m1, m1.T, sep='\n')
     m1[0], m1[1] = m1[1], m1[0]
+    m1[0][1] = 100
     print("m1, m1.T", m1, m1.T, sep='\n')
     m2 = Matrix([[1, 2], [3, 4]])
     m3 = Matrix([[1, 2, 3], [3, 4, 5], [5, 6, 7]])
