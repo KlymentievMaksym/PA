@@ -1,14 +1,13 @@
 # а) Реалiзувати рекурсивний (Top-Down MergeSort) та iтеративний (Bottom-Up MergeSort)
 # варiанти алгоритму сортування злиттям (з пiдтримкою обчислення часу виконання,
 # кiлькостi проведених порiвнянь, операцiй“копiювань” та використаної пам’ятi)
-from Timer import Timer
 import time
 import sys
 
 
 
 class MergeSort:
-    def _merge(self, left, right, _equations, _memory):
+    def _merge(self, left, right, _equations, _memory, _copies):
         result = []
         i, j = 0, 0
         size_left, size_right = len(left), len(right)
@@ -22,56 +21,54 @@ class MergeSort:
             _equations += 1
             if left[i] < right[j]:
                 result.append(left[i])
+                _copies += 1
                 i += 1
             else:
                 result.append(right[j])
+                _copies += 1
                 j += 1
         if i < size_left:  # 1
             result.extend(left[i:])
+            _copies += len(left[i:])
         elif j < size_right:  # 1
             result.extend(right[j:])
+            _copies += len(right[j:])
 
         # _equations += 3 + min(size_left, size_right)
         # _memory += sys.getsizeof(result)
 
-        return result, _equations, _memory
+        return result, _equations, _memory, _copies
 
     def recursive_merge_sort(self, array, time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _copies=0, _depth=0):
 
-        # _equations += 1
         if time_count:
             start = time.time()
-            # _memory += sys.getsizeof(start)
+            _memory += sys.getsizeof(start)
 
-        # _equations += 1
         if len(array) <= 1 and _depth != 0:
             return array, _equations, _memory, _copies
 
         mid = len(array) // 2
+        _memory += sys.getsizeof(mid)
         left, _equations, _memory, _copies = self.recursive_merge_sort(array[:mid], False, False, False, _equations, _memory, _copies, _depth+1)
-        _copies += 1
+        _copies += len(left)
+        _memory += sys.getsizeof(left)
         right, _equations, _memory, _copies = self.recursive_merge_sort(array[mid:], False, False, False, _equations, _memory, _copies, _depth+1)
-        _copies += 1
-        result, _equations, _memory = self._merge(left, right, _equations, _memory)
-        # _copies += 1
+        _copies += len(right)
+        _memory += sys.getsizeof(right)
+        result, _equations, _memory, _copies = self._merge(left, right, _equations, _memory, _copies)
+        _memory += sys.getsizeof(result)
 
-        # _equations += 1
         if _depth != 0:
-            # print(_equations, _memory)
             return result, _equations, _memory, _copies
 
-        _memory += sys.getsizeof(mid)
-        _memory += sys.getsizeof(left)
-        _memory += sys.getsizeof(right)
-        _memory += sys.getsizeof(array)
-
-        # _equations += 1
         if time_count:
             time_result = time.time() - start
-            # _memory += sys.getsizeof(result)
+            _memory += sys.getsizeof(time_result)
             to_return = {"Time": time_result, "Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "Recursive"}
         else:
             to_return = {"Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "Recursive"}
+        _memory += sys.getsizeof(to_return)
 
         if not details_need:
             return result
@@ -94,39 +91,42 @@ class MergeSort:
             start = time.time()
 
         n = len(array)
+        _memory += sys.getsizeof(n)
 
         length = 1
+        _memory += sys.getsizeof(length)
         while length <= n//2:
             for i in range(0, n, length*2):
                 j = i + length
 
                 left = result[i:j]
-                _copies += 1
+                _copies += len(left)
+                _memory += sys.getsizeof(left)
                 right = result[j:j+length]
-                _copies += 1
+                _copies += len(right)
+                _memory += sys.getsizeof(right)
 
                 if left != [] and right != []:
-                    result[i:j+length], _equations, _memory = self._merge(left, right, _equations, _memory)
+                    result[i:j+length], _equations, _memory, _copies = self._merge(left, right, _equations, _memory, _copies)
             length *= 2
 
         left = result[:length]
         _copies += 1
+        _memory += sys.getsizeof(left)
         right = result[length:]
         _copies += 1
-
-        result, _equations, _memory = self._merge(left, right, _equations, _memory)
-
-        _memory += sys.getsizeof(n)
-        _memory += sys.getsizeof(length)
-        _memory += sys.getsizeof(left)
         _memory += sys.getsizeof(right)
+
+        result, _equations, _memory, _copies = self._merge(left, right, _equations, _memory, _copies)
         _memory += sys.getsizeof(result)
 
         if time_count:
             time_result = time.time() - start
+            _memory += sys.getsizeof(time_result)
             to_return = {"Time": time_result, "Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "Iterative"}
         else:
             to_return = {"Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "Iterative"}
+        _memory += sys.getsizeof(to_return)
 
         if not details_need:
             return result
