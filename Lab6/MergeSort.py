@@ -1,6 +1,19 @@
 # а) Реалiзувати рекурсивний (Top-Down MergeSort) та iтеративний (Bottom-Up MergeSort)
 # варiанти алгоритму сортування злиттям (з пiдтримкою обчислення часу виконання,
 # кiлькостi проведених порiвнянь, операцiй“копiювань” та використаної пам’ятi)
+
+# в) Реалiзувати додатково третiй варiант алгоритму сортування злиттям, який має бути
+# iтеративним з оптимiзацiями cutoff(-to-insertion), stop-if-already-sorted та eliminate-the-
+# copy-to-the-auxiliary-array.
+
+# г) Реалiзувати додатково четвертий варiант алгоритму сортування злиттям, який має бути
+# iтеративним, але з подiлом на 10 частин, а не 2 частини. Замiсть такого варiанту можна
+# реалiзувати алгоритм сортування злиттям для зв’язного списку, а не масиву.
+
+# д) Виконати порiвняльний аналiз (з даними рiзного розмiру) всiх чотирьох варiантiв
+# алгоритму сортування злиттям вiдносно часу виконання, кiлькостi проведених
+# порiвнянь, операцiй“копiювань” та використаної пам’ятi.
+
 import time
 import sys
 
@@ -79,7 +92,6 @@ class MergeSort:
 
         if inplace:
             array[:] = result
-            _copies += 1
 
         return result, to_return
 
@@ -90,7 +102,7 @@ class MergeSort:
             result = array
         else:
             result = array.copy()
-            _copies += 1
+            _copies += len(result)
             _memory += sys.getsizeof(result)
 
         if time_count:
@@ -115,6 +127,66 @@ class MergeSort:
                 if left != [] and right != []:
                     result[i:j+length], _equations, _memory, _copies = self._merge(left, right, _equations, _memory, _copies)
             length *= 2
+
+        left = result[:length]
+        _copies += 1
+        _memory += sys.getsizeof(left)
+        right = result[length:]
+        _copies += 1
+        _memory += sys.getsizeof(right)
+
+        result, _equations, _memory, _copies = self._merge(left, right, _equations, _memory, _copies)
+        _memory += sys.getsizeof(result)
+
+        if time_count:
+            time_result = time.time() - start
+            _memory += sys.getsizeof(time_result)
+            to_return = {"Time": time_result, "Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "Iterative"}
+        else:
+            to_return = {"Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "Iterative"}
+        _memory += sys.getsizeof(to_return)
+
+        if not details_need:
+            return result
+
+        return result, to_return
+
+    def iterative_cutoff_stop_eliminate_merge_sort(self, array, time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _copies=0):
+        """в) Реалiзувати додатково третiй варiант алгоритму сортування злиттям, який має бути iтеративним з оптимiзацiями cutoff(-to-insertion), stop-if-already-sorted та eliminate-the-copy-to-the-auxiliary-array"""
+        pass
+        # if inplace:
+        #     result = array
+        # else:
+        #     result = array.copy()
+        #     _copies += len(result)
+        #     _memory += sys.getsizeof(result)
+
+        # if time_count:
+        #     start = time.time()
+
+        # n = len(array)
+        # _memory += sys.getsizeof(n)
+
+        # length = 7
+        # _memory += sys.getsizeof(length)
+        # while length <= n//2:
+        #     for i in range(0, n, length*2):
+        #         j = i + length
+
+        #         left = result[i:j]
+        #         if i == 0:
+        #             left = insertion_sort(left)
+        #             _equations += 2
+        #             _memory += sys.getsizeof(left)
+        #         _copies += len(left)
+        #         _memory += sys.getsizeof(left)
+        #         right = result[j:j+length]
+        #         _copies += len(right)
+        #         _memory += sys.getsizeof(right)
+
+        #         if left != [] and right != []:
+        #             result[i:j+length], _equations, _memory, _copies = self._merge(left, right, _equations, _memory, _copies)
+        #     length *= 2
 
         left = result[:length]
         _copies += 1
@@ -211,7 +283,6 @@ class MergeSort:
 
         if inplace:
             linked_list[:] = result
-            _copies += 1
 
         return result, to_return
     
@@ -221,11 +292,18 @@ if __name__ == '__main__':
     sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.linked_list_merge_sort]
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers']
     numbers = [10, 100]  # , 1000, 10000
-    lst = RandomLists(10000, 'sorted').list
-    print(Converter.array_to_linked_list(lst))
+    lst = RandomLists(10, 'somenumbers').list
+    # print(Converter.array_to_linked_list(lst))
     print(merge_sort.recursive_merge_sort(lst, time_count=True, details_need=True))
     print(merge_sort.iterative_merge_sort(lst, time_count=True, details_need=True))
     print(merge_sort.linked_list_merge_sort(Converter.array_to_linked_list(lst), time_count=True, details_need=True))
+
+    # lst = Converter.array_to_linked_list(lst)
+    # print(lst)
+    # print(merge_sort.linked_list_merge_sort(lst, time_count=True, details_need=True, inplace=False))
+    # print(merge_sort.linked_list_merge_sort(lst, time_count=True, details_need=True, inplace=True))
+    # print(lst)
+
     # for sort in sorts:
     #     for typ in types:
     #         for number in numbers:

@@ -92,6 +92,38 @@ class LinkedList:
                 return node
             node = node.next
 
+    def __setitem__(self, index, data):
+        if isinstance(index, int):
+            node = self[index]
+            if isinstance(data, Node):
+                node.data = data.data
+            else:
+                node.data = data
+        elif isinstance(index, slice):
+            start = 0 if index.start is None else index.start
+            stop = self.size if index.stop is None else index.stop
+            step = 1 if index.step is None else index.step
+            if start < 0 or stop < 0 or step == 0:
+                raise IndexError
+            if start >= self.size:
+                start = self.size
+            if stop > self.size:
+                stop = self.size
+            for i in range(start, stop, step):
+                node = self[i]
+                if isinstance(data, Node):
+                    node.data = data.data
+                elif isinstance(data, list):
+                    if stop - start != len(data):
+                        raise IndexError
+                    if isinstance(data[i], Node):
+                        node.data = data[i].data
+                    else:
+                        node.data = data[i]
+                elif isinstance(data, LinkedList):
+                    node.data = data[i]
+                else:
+                    node.data = data
     def __getitem__(self, index):
         if isinstance(index, slice):
             start = 0 if index.start is None else index.start
@@ -163,3 +195,5 @@ if __name__ == "__main__":
     node2 = Node(4)
     node1.next = node2
     print(node1 < node2)
+    linked_list[:2] = LinkedList(node1, 2)
+    print(linked_list)
