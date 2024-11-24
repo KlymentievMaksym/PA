@@ -365,30 +365,63 @@ if __name__ == '__main__':
     merge_sort = MergeSort()
     sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort, merge_sort.linked_list_merge_sort]
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers']
-    numbers = [10, 100]  # , 1000, 10000, 100000
-    lst = RandomLists(10000, 'sorted').list
-    # print(lst)
-    # print(Converter.array_to_linked_list(lst))
-    # print(merge_sort.recursive_merge_sort(lst, time_count=True, details_need=True))
-    # print(merge_sort.iterative_merge_sort(lst, time_count=True, details_need=True)[1])
-    # print(merge_sort.iterative_merge_sort(lst, time_count=True, details_need=True))
-    # print(merge_sort.iterative_cutoff_stop_eliminate_merge_sort(lst, time_count=True, details_need=True)[1])
-    # print(merge_sort.iterative_cutoff_stop_eliminate_merge_sort(lst, time_count=True, details_need=True))
-    # print(merge_sort.linked_list_merge_sort(Converter.array_to_linked_list(lst), time_count=True, details_need=True))
-    print(merge_sort.linked_list_merge_sort(Converter.array_to_linked_list(lst), time_count=True, details_need=True)[1])
+    numbers = [10]  # , 100, 1000, 10000, 100000
 
-    # lst = Converter.array_to_linked_list(lst)
-    # print(lst)
-    # print(merge_sort.linked_list_merge_sort(lst, time_count=True, details_need=True, inplace=False))
-    # print(merge_sort.linked_list_merge_sort(lst, time_count=True, details_need=True, inplace=True))
-    # print(lst)
+    tries = 50
 
-    # for sort in sorts:
-    #     for typ in types:
-    #         for number in numbers:
-    #             if sort == merge_sort.linked_list_merge_sort:
-    #                 rng = RandomLists(number, typ, linked_list=True)
-    #             else:
-    #                 rng = RandomLists(number, typ)
-    #             print(rng)
-    #             print(sort(rng.list))
+    srt = dict()
+    tp = dict()
+    nm = dict()
+
+    for sort in sorts:
+        for typ in types:
+            for number in numbers:
+                tim = []
+                equations = []
+                memory = []
+                copies = []
+                for _ in range(tries):
+                    if sort == merge_sort.linked_list_merge_sort:
+                        rng = RandomLists(number, typ, linked_list=True)
+                    else:
+                        rng = RandomLists(number, typ)
+                    list_sorted, dct = sort(rng.list, time_count=True, details_need=True)
+                    tim.append(dct["Time"])
+                    equations.append(dct["Equations"])
+                    memory.append(dct["Memory"])
+                    copies.append(dct["Copies"])
+                # print(dct)
+                nm[str(number) + " Name"] = dct["Name"]
+                nm[str(number) + " Time"] = sum(tim) / len(tim)
+                nm[str(number) + " Equations"] = sum(equations) / len(equations)
+                nm[str(number) + " Memory"] = sum(memory) / len(memory)
+                nm[str(number) + " Copies"] = sum(copies) / len(copies)
+            tp[typ] = nm
+            print(nm)
+        print(tp)
+        break
+        srt[str(sort)] = tp
+        # print(srt)
+        break
+    for sort, types in srt.items():
+        print(sort)
+        for typ, numbs in types.items():
+            print(typ)
+            for num, val in numbs.items():
+                print(num, val)
+            print()
+        print()
+                    
+
+
+# lst = RandomLists(100000, 'random').list
+# print(lst)
+# print(Converter.array_to_linked_list(lst))
+# print(merge_sort.recursive_merge_sort(lst, time_count=True, details_need=True))
+# print(merge_sort.iterative_merge_sort(lst, time_count=True, details_need=True)[1])
+# print(merge_sort.iterative_merge_sort(lst, time_count=True, details_need=True))
+# print(merge_sort.iterative_cutoff_stop_eliminate_merge_sort(lst, time_count=True, details_need=True)[1])
+# print(merge_sort.iterative_cutoff_stop_eliminate_merge_sort(lst, time_count=True, details_need=True))
+# print(merge_sort.linked_list_merge_sort(Converter.array_to_linked_list(lst), time_count=True, details_need=True))
+# print(merge_sort.linked_list_merge_sort(Converter.array_to_linked_list(lst), time_count=True, details_need=True)[1])
+

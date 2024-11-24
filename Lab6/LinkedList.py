@@ -65,6 +65,7 @@ class LinkedList:
         if isinstance(data, Node):
             node = data.copy()
             node.next = None
+            node.prev = None
         else:
             node = Node(data)
         if self.head is None:
@@ -77,26 +78,28 @@ class LinkedList:
             
         self.size += 1
 
-    def extend(self, linked_list, end=-1):
+    def extend(self, linked_list):
         if isinstance(linked_list, LinkedList):
-            if end == -1:
-                if self.size == 0:
-                    self.head = linked_list.head
-                    self.tail = linked_list.tail
-                    self.size = linked_list.size
-                else:
-                    self.tail.next = linked_list.head
-                    self.tail = linked_list.tail
-                    self.size += linked_list.size
+            # if end == -1:
+            if self.size == 0:
+                self.head = linked_list.head
+                self.tail = linked_list.tail
+                self.size = linked_list.size
+            else:
+                self.tail.next = linked_list.head
+                self.tail = linked_list.tail
+                self.size += linked_list.size
             # else:
+            #     if end == 0:
+            #         return
             #     if self.size == 0:
             #         self.head = linked_list.head
-            #         self.tail = linked_list[end].copy()
+            #         self.tail = linked_list[end-1]
             #         self.tail.next = None
             #         self.size = linked_list.count_size(self.head)
             #     else:
             #         self.tail.next = linked_list.head
-            #         self.tail = linked_list[end].copy()
+            #         self.tail = linked_list[end-1]
             #         self.tail.next = None
             #         self.size += linked_list.count_size(linked_list.head)
 
@@ -248,12 +251,17 @@ if __name__ == "__main__":
     linked_list.add(5)
     print(linked_list[:3])
     print(linked_list[3:])
-    print(linked_list[-1])
+    print(linked_list[-2])
     node1 = Node(3)
     node2 = Node(4)
     node1.next = node2
+    node2.prev = node1
+    node2.next = Node(4)
+    node2.next.prev = node2
     print(node1 < node2)
     linked_list[:2] = LinkedList(node1, linked_list.count_size(node1))
     print(linked_list)
-    linked_list.extend(LinkedList(node1, linked_list.count_size(node1)))
+    test = LinkedList(node1, linked_list.count_size(node1))
+    linked_list.extend(test)
     print(linked_list)
+    print(test)
