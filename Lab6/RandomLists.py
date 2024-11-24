@@ -26,7 +26,7 @@ class RandomLists:
         if linked_list:
             self.list = Converter.array_to_linked_list(self.list)
     
-    def sorted(self):
+    def sorted(self, *args, **kwargs):
         random_start = random.randint(0, self.n)
         random_step = random.randint(0, self.n)
         n = 0
@@ -37,7 +37,7 @@ class RandomLists:
             n += 1
         return to_return
 
-    def random(self):
+    def random(self, *args, **kwargs):
         return list(random.randint(0, self.n, self.n))
 
     def almostsorted(self, disorder_level: float = 0.05):
@@ -51,10 +51,10 @@ class RandomLists:
             to_return[i], to_return[j] = to_return[j], to_return[i]
         return to_return
 
-    def reverse(self):
+    def reverse(self, *args, **kwargs):
         return self.sorted()[::-1]
 
-    def somenumbers(self, range_start=1, range_end=5):
+    def somenumbers(self, range_start=1, range_end=5, *args, **kwargs):
         random_start = random.randint(0, self.n)
         random_step = random.randint(range_start, range_end)
         return list(random.randint(random_start, random_start + random_step, self.n))

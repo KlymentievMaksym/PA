@@ -4,6 +4,9 @@
 import time
 import sys
 
+from RandomLists import RandomLists
+from LinkedList import LinkedList
+from Converter import Converter
 
 
 class MergeSort:
@@ -40,6 +43,7 @@ class MergeSort:
         return result, _equations, _memory, _copies
 
     def recursive_merge_sort(self, array, time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _copies=0, _depth=0):
+        """а) Реалiзувати рекурсивний (Top-Down MergeSort)"""
 
         if time_count:
             start = time.time()
@@ -80,6 +84,8 @@ class MergeSort:
         return result, to_return
 
     def iterative_merge_sort(self, array, time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _copies=0):
+        """а) Реалiзувати iтеративний (Bottom-Up MergeSort)"""
+
         if inplace:
             result = array
         else:
@@ -132,36 +138,100 @@ class MergeSort:
             return result
 
         return result, to_return
+
+    def _linked_merge(self, linked_list_left, linked_list_right, _equations=0, _memory=0, _copies=0):
+        i, j = linked_list_left.head, linked_list_right.head
+        _memory += sys.getsizeof(i)
+        _memory += sys.getsizeof(j)
+
+        result = LinkedList()
+
+        # print(i, j, i < j)
+
+        while i is not None and j is not None:
+            _equations += 1
+            if i < j:
+                result.add(i.data)
+                i = i.next
+                _copies += 1
+            else:
+                result.add(j.data)
+                j = j.next
+                _copies += 1
+        while i is not None:
+            result.add(i.data)
+            i = i.next
+            _copies += 1
+        while j is not None:
+            result.add(j.data)
+            j = j.next
+            _copies += 1
+
+        _memory += sys.getsizeof(result)
+
+        return result, _equations, _memory, _copies
+
+    def linked_list_merge_sort(self, linked_list, time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _copies=0, _depth=0):
+        """г) Реалiзувати додатково четвертий варiант алгоритму сортування злиттям, алгоритм сортування злиттям для зв’язного списку, а не масиву."""
+        if time_count:
+            start = time.time()
+            _memory += sys.getsizeof(start)
+
+        if len(linked_list) <= 1:
+            return linked_list, _equations, _memory, _copies
+
+        mid_index = len(linked_list) // 2
+        _memory += sys.getsizeof(mid_index)
+
+        linked_list_left, _equations, _memory, _copies = self.linked_list_merge_sort(linked_list[:mid_index], False, False, False, _equations, _memory, _copies, _depth + 1)
+        _copies += len(linked_list_left)
+        _memory += sys.getsizeof(linked_list_left)
+        linked_list_right, _equations, _memory, _copies = self.linked_list_merge_sort(linked_list[mid_index:], False, False, False, _equations, _memory, _copies, _depth + 1) 
+        _copies += len(linked_list_right)
+        _memory += sys.getsizeof(linked_list_right)
+        result, _equations, _memory, _copies = self._linked_merge(linked_list_left, linked_list_right, _equations, _memory, _copies)
+
+        # print(linked_list_left)
+        # print(linked_list_right)
+        # print(result)
+
+        if _depth != 0:
+            return result, _equations, _memory, _copies
+
+        if time_count:
+            time_result = time.time() - start
+            _memory += sys.getsizeof(time_result)
+            to_return = {"Time": time_result, "Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "LinkedList"}
+        else:
+            to_return = {"Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "LinkedList"}
+        _memory += sys.getsizeof(to_return)
+
+        if not details_need:
+            return result
+
+        if inplace:
+            linked_list[:] = result
+            _copies += 1
+
+        return result, to_return
     
 
 if __name__ == '__main__':
     merge_sort = MergeSort()
-    # lst_to_test2 = [1, 2, 3, 4, 5, 6, 7, 8]
-    lst_to_test2 = [1, 5, 3, 7, 2, 6, 4, 8]
-    # lst_to_test2 = [1]
-    # lst_to_test2 = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-    # lst_to_test2 = [21, 17, 40, 4, 8, 51, 15]
-    list_of_times_iterative = []
-    list_of_times_recursive = []
-
-    print(merge_sort.recursive_merge_sort(lst_to_test2, True, True, False))
-    print(merge_sort.recursive_merge_sort(lst_to_test2, False, False, False))
-    print(lst_to_test2)
-    print()
-    print(merge_sort.iterative_merge_sort(lst_to_test2, True, True, False))
-    print(lst_to_test2)
-
-    # for i in range(100):
-    #     with Timer() as t:
-    #         (merge_sort.iterative_merge_sort(lst_to_test2.copy()))
-    #     list_of_times_iterative.append(t.time_used)
-    #     with Timer() as t:
-    #         (merge_sort.recursive_merge_sort(lst_to_test2.copy()))
-    #     list_of_times_recursive.append(t.time_used)
-
-    # result_for_iterative = sum(list_of_times_iterative)/len(list_of_times_iterative)
-    # result_for_recursive = sum(list_of_times_recursive)/len(list_of_times_recursive)
-    # # difference = abs(result_for_iterative - result_for_recursive)
-    # print(f"Average time for iterative merge sort: {result_for_iterative}")
-    # print(f"Average time for recursive merge sort: {result_for_recursive}")
-    # print(f"Difference between times: {difference}")
+    sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.linked_list_merge_sort]
+    types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers']
+    numbers = [10, 100]  # , 1000, 10000
+    lst = RandomLists(10000, 'sorted').list
+    print(Converter.array_to_linked_list(lst))
+    print(merge_sort.recursive_merge_sort(lst, time_count=True, details_need=True))
+    print(merge_sort.iterative_merge_sort(lst, time_count=True, details_need=True))
+    print(merge_sort.linked_list_merge_sort(Converter.array_to_linked_list(lst), time_count=True, details_need=True))
+    # for sort in sorts:
+    #     for typ in types:
+    #         for number in numbers:
+    #             if sort == merge_sort.linked_list_merge_sort:
+    #                 rng = RandomLists(number, typ, linked_list=True)
+    #             else:
+    #                 rng = RandomLists(number, typ)
+    #             print(rng)
+    #             print(sort(rng.list))
