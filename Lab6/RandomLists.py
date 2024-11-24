@@ -6,16 +6,25 @@
 # 0.01с до 30с.
 
 
+from Converter import Converter
 from numpy import random
 
 
 class RandomLists:
-    def __init__(self, n: int, type: str, *args):
+    def __init__(self, n: int, type: str, *args, **kwargs):
         self._TYPES = {'sorted': self.sorted, 'random': self.random, 'almostsorted': self.almostsorted, 'reverse': self.reverse, 'somenumbers': self.somenumbers}
-        self.n = n
         if type not in self._TYPES:
-            raise ValueError(f'Invalid type: {type}')
+            raise ValueError(f'Invalid type: {type}, excpected one of {list(self._TYPES.keys())}')
+
+        self.n = n
+
+        linked_list = kwargs.get('linked_list', False)
+        linked_list = kwargs.get('linlist', linked_list)
+        linked_list = kwargs.get('llist', linked_list)
+
         self.list = self._TYPES[type](*args)
+        if linked_list:
+            self.list = Converter.array_to_linked_list(self.list)
     
     def sorted(self):
         random_start = random.randint(0, self.n)
@@ -31,8 +40,16 @@ class RandomLists:
     def random(self):
         return list(random.randint(0, self.n, self.n))
 
-    def almostsorted(self):
-        raise NotImplementedError
+    def almostsorted(self, disorder_level: float = 0.05):
+        rang = range(self.n)
+        to_return = list(rang)
+
+        num_swaps = int(disorder_level * self.n)
+
+        for _ in range(num_swaps):
+            i, j = random.choice(rang, 2)
+            to_return[i], to_return[j] = to_return[j], to_return[i]
+        return to_return
 
     def reverse(self):
         return self.sorted()[::-1]
@@ -46,5 +63,5 @@ class RandomLists:
         return str(self.list)
 
 if __name__ == '__main__':
-    rng = RandomLists(10, 'somenumbers')
+    rng = RandomLists(10, 'reverse', linked_list=True)
     print(rng)
