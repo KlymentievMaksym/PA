@@ -151,47 +151,124 @@ class MergeSort:
 
         return result, to_return
 
-    def iterative_cutoff_stop_eliminate_merge_sort(self, array, time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _copies=0):
+    def _insertion_sort(self, array, _equations, _memory, _copies):
+        for i in range(1, len(array)):
+            j = i
+            _memory += sys.getsizeof(i)
+            _memory += sys.getsizeof(j)
+            while j > 0 and array[j] < array[j-1]:
+                _equations += 1
+                array[j], array[j-1] = array[j-1], array[j]
+                j -= 1
+            _equations += 1
+        return array, _equations, _memory, _copies
+
+    def _merge_opt(self, left, right, _equations, _memory, _copies):
+        _equations += 1
+        mx_left = max(left)
+        mn_left = min(left)
+        _memory += sys.getsizeof(mx_left)
+        _memory += sys.getsizeof(mn_left)
+        mx_right = max(right)
+        mn_right = min(right)
+        _memory += sys.getsizeof(mx_right)
+        _memory += sys.getsizeof(mn_right)
+        if mx_left <= mn_right and left[-1] == mx_left:
+            return left + right, _equations, _memory, _copies
+        elif mn_left >= mx_right and right[0] == mx_right:
+            return right + left, _equations, _memory, _copies
+
+        result = []
+        i, j = 0, 0
+        size_left, size_right = len(left), len(right)
+
+        _memory += sys.getsizeof(i)
+        _memory += sys.getsizeof(j)
+        _memory += sys.getsizeof(size_left)
+        _memory += sys.getsizeof(size_right)
+
+        while i < size_left and j < size_right:  # min(size_left, size_right)
+            _equations += 1
+            if left[i] < right[j]:
+                result.append(left[i])
+                _copies += 1
+                i += 1
+            else:
+                result.append(right[j])
+                _copies += 1
+                j += 1
+        if i < size_left:  # 1
+            result.extend(left[i:])
+            _copies += len(left[i:])
+        elif j < size_right:  # 1
+            result.extend(right[j:])
+            _copies += len(right[j:])
+
+        # _equations += 3 + min(size_left, size_right)
+        # _memory += sys.getsizeof(result)
+
+        return result, _equations, _memory, _copies
+
+    def iterative_cutoff_stop_eliminate_merge_sort(self, array, time_for_insertion=10, time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _copies=0):  # TODO: NOT BREAK BEETWEEN 80*10^c and 90*10^c (?0o0?)
         """в) Реалiзувати додатково третiй варiант алгоритму сортування злиттям, який має бути iтеративним з оптимiзацiями cutoff(-to-insertion), stop-if-already-sorted та eliminate-the-copy-to-the-auxiliary-array"""
-        pass
-        # if inplace:
-        #     result = array
-        # else:
-        #     result = array.copy()
-        #     _copies += len(result)
-        #     _memory += sys.getsizeof(result)
 
-        # if time_count:
-        #     start = time.time()
+        if inplace:
+            result = array
+        else:
+            result = array.copy()
+            _copies += len(result)
+            _memory += sys.getsizeof(result)
 
-        # n = len(array)
-        # _memory += sys.getsizeof(n)
+        if time_count:
+            start = time.time()
 
-        # length = 7
-        # _memory += sys.getsizeof(length)
-        # while length <= n//2:
-        #     for i in range(0, n, length*2):
-        #         j = i + length
+        n = len(array)
+        _memory += sys.getsizeof(n)
 
-        #         left = result[i:j]
-        #         if i == 0:
-        #             left = insertion_sort(left)
-        #             _equations += 2
-        #             _memory += sys.getsizeof(left)
-        #         _copies += len(left)
-        #         _memory += sys.getsizeof(left)
-        #         right = result[j:j+length]
-        #         _copies += len(right)
-        #         _memory += sys.getsizeof(right)
+        length = time_for_insertion
+        _memory += sys.getsizeof(length)
+        
+        main_list = result
+        additional_list = [float('inf')] * n
+        _memory += sys.getsizeof(additional_list)
 
-        #         if left != [] and right != []:
-        #             result[i:j+length], _equations, _memory, _copies = self._merge(left, right, _equations, _memory, _copies)
-        #     length *= 2
+        while length <= n//2:
+            for i in range(0, n, length*2):
+                j = i + length
+
+                left = main_list[i:j]
+                if length <= time_for_insertion:
+                    left, _equations, _memory, _copies = self._insertion_sort(left, _equations, _memory, _copies)
+                _copies += len(left)
+                _memory += sys.getsizeof(left)
+
+                right = main_list[j:j+length]
+                if length <= time_for_insertion:
+                    right, _equations, _memory, _copies = self._insertion_sort(right, _equations, _memory, _copies)
+                _copies += len(right)
+                _memory += sys.getsizeof(right)
+
+                if left != [] and right != []:
+                    additional_list[i:j+length], _equations, _memory, _copies = self._merge(left, right, _equations, _memory, _copies)
+            # if float('inf') in additional_list:
+            #     additional_list[i-2*length:], _equations, _memory, _copies = self._insertion_sort(main_list[i-length:], _equations, _memory, _copies) 
+            # print(main_list)
+            # print(additional_list)
+            # print()
+            main_list, additional_list = additional_list, main_list
+            length *= 2
+        # print(main_list)
+        # print(additional_list)
+        result = main_list
 
         left = result[:length]
+        if length <= time_for_insertion:
+            left, _equations, _memory, _copies = self._insertion_sort(left, _equations, _memory, _copies)
         _copies += 1
         _memory += sys.getsizeof(left)
         right = result[length:]
+        if length <= time_for_insertion:
+            right, _equations, _memory, _copies = self._insertion_sort(right, _equations, _memory, _copies)
         _copies += 1
         _memory += sys.getsizeof(right)
 
@@ -201,9 +278,9 @@ class MergeSort:
         if time_count:
             time_result = time.time() - start
             _memory += sys.getsizeof(time_result)
-            to_return = {"Time": time_result, "Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "Iterative"}
+            to_return = {"Time": time_result, "Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "IterativeOPT"}
         else:
-            to_return = {"Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "Iterative"}
+            to_return = {"Equations": _equations, "Memory": _memory, "Copies": _copies, "Name": "IterativeOPT"}
         _memory += sys.getsizeof(to_return)
 
         if not details_need:
@@ -230,15 +307,12 @@ class MergeSort:
                 result.add(j.data)
                 j = j.next
                 _copies += 1
-        while i is not None:
-            result.add(i.data)
-            i = i.next
-            _copies += 1
-        while j is not None:
-            result.add(j.data)
-            j = j.next
-            _copies += 1
-
+        if i is not None:
+            result.extend(LinkedList(i, result.count_size(i)))
+            _copies += result.count_size(i)
+        elif j is not None:
+            result.extend(LinkedList(j, result.count_size(j)))
+            _copies += result.count_size(j)
         _memory += sys.getsizeof(result)
 
         return result, _equations, _memory, _copies
@@ -289,14 +363,19 @@ class MergeSort:
 
 if __name__ == '__main__':
     merge_sort = MergeSort()
-    sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.linked_list_merge_sort]
+    sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort, merge_sort.linked_list_merge_sort]
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers']
-    numbers = [10, 100]  # , 1000, 10000
-    lst = RandomLists(10, 'somenumbers').list
+    numbers = [10, 100]  # , 1000, 10000, 100000
+    lst = RandomLists(10000, 'sorted').list
+    # print(lst)
     # print(Converter.array_to_linked_list(lst))
-    print(merge_sort.recursive_merge_sort(lst, time_count=True, details_need=True))
-    print(merge_sort.iterative_merge_sort(lst, time_count=True, details_need=True))
-    print(merge_sort.linked_list_merge_sort(Converter.array_to_linked_list(lst), time_count=True, details_need=True))
+    # print(merge_sort.recursive_merge_sort(lst, time_count=True, details_need=True))
+    # print(merge_sort.iterative_merge_sort(lst, time_count=True, details_need=True)[1])
+    # print(merge_sort.iterative_merge_sort(lst, time_count=True, details_need=True))
+    # print(merge_sort.iterative_cutoff_stop_eliminate_merge_sort(lst, time_count=True, details_need=True)[1])
+    # print(merge_sort.iterative_cutoff_stop_eliminate_merge_sort(lst, time_count=True, details_need=True))
+    # print(merge_sort.linked_list_merge_sort(Converter.array_to_linked_list(lst), time_count=True, details_need=True))
+    print(merge_sort.linked_list_merge_sort(Converter.array_to_linked_list(lst), time_count=True, details_need=True)[1])
 
     # lst = Converter.array_to_linked_list(lst)
     # print(lst)

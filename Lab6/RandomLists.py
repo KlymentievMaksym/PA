@@ -41,13 +41,12 @@ class RandomLists:
         return list(random.randint(0, self.n, self.n))
 
     def almostsorted(self, disorder_level: float = 0.05):
-        rang = range(self.n)
-        to_return = list(rang)
+        to_return = self.sorted()
 
         num_swaps = int(disorder_level * self.n)
 
         for _ in range(num_swaps):
-            i, j = random.choice(rang, 2)
+            i, j = random.randint(0, self.n-1), random.randint(0, self.n-1)
             to_return[i], to_return[j] = to_return[j], to_return[i]
         return to_return
 
@@ -63,5 +62,5 @@ class RandomLists:
         return str(self.list)
 
 if __name__ == '__main__':
-    rng = RandomLists(10, 'reverse', linked_list=True)
+    rng = RandomLists(10, 'almostsorted', linked_list=True)
     print(rng)

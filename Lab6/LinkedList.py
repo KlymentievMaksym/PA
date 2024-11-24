@@ -3,12 +3,16 @@ from copy import copy as cp, deepcopy as dcp
 
 
 class Node:
-    def __init__(self, data=None, next=None):
+    def __init__(self, data=None, next=None, prev=None):
         self.data = data
         self.next = next
+        self.prev = prev
 
     def copy(self):
         return cp(self)
+
+    # def deepcopy(self):
+    #     return dcp(self)
 
     def __eq__(self, other):
         if not isinstance(other, Node):
@@ -47,13 +51,14 @@ class Node:
         # size += sys.getsizeof(self.next)
         return size
 
-    def __str__(self):
+    def __repr__(self):
         return str(self.data)
 
 
 class LinkedList:
     def __init__(self, head=None, size=0):
         self.head = head
+        self.tail = head
         self.size = size
 
     def add(self, data):
@@ -64,12 +69,36 @@ class LinkedList:
             node = Node(data)
         if self.head is None:
             self.head = node
+            self.tail = node
         else:
-            head = self.head
-            while head.next is not None:
-                head = head.next
-            head.next = node
+            self.tail.next = node
+            node.prev = self.tail
+            self.tail = node
+            
         self.size += 1
+
+    def extend(self, linked_list, end=-1):
+        if isinstance(linked_list, LinkedList):
+            if end == -1:
+                if self.size == 0:
+                    self.head = linked_list.head
+                    self.tail = linked_list.tail
+                    self.size = linked_list.size
+                else:
+                    self.tail.next = linked_list.head
+                    self.tail = linked_list.tail
+                    self.size += linked_list.size
+            # else:
+            #     if self.size == 0:
+            #         self.head = linked_list.head
+            #         self.tail = linked_list[end].copy()
+            #         self.tail.next = None
+            #         self.size = linked_list.count_size(self.head)
+            #     else:
+            #         self.tail.next = linked_list.head
+            #         self.tail = linked_list[end].copy()
+            #         self.tail.next = None
+            #         self.size += linked_list.count_size(linked_list.head)
 
     def remove(self, data):
         node = self.head
@@ -78,6 +107,7 @@ class LinkedList:
             if node.data == data:
                 if prev:
                     prev.next = node.next
+                    node.next.prev = prev
                 else:
                     self.head = node.next
                 self.size -= 1
@@ -85,12 +115,24 @@ class LinkedList:
             prev = node
             node = node.next
 
+    def count_size(self, node):
+        if isinstance(node, Node):
+            node = node
+        elif isinstance(node, int):
+            node = self[node]
+        size = 0
+        while node:
+            size += 1
+            node = node.next
+        return size
+
     def find(self, data):
         node = self.head
         while node:
             if node.data == data:
                 return node
             node = node.next
+        return None
 
     def __setitem__(self, index, data):
         if isinstance(index, int):
@@ -136,16 +178,31 @@ class LinkedList:
             if stop > self.size:
                 stop = self.size
             result = LinkedList()
+            # if step == 1:
+            #     result.head = self[start]
+            #     result.head.prev = None
+            #     result.tail = self[stop-1]
+            #     if result.tail is not None:
+            #         result.tail.next = None
+            #     result.size = stop - start
+            # else:
             for i in range(start, stop, step):
                 result.add(self[i])
             return result
 
         elif isinstance(index, int):
-            if index < 0 or index >= self.size:
+            if index >= self.size:
                 raise IndexError
-            node = self.head
-            for i in range(index):
-                node = node.next
+            if index < 0:
+                node = self.tail
+                if -index > self.size:
+                    raise IndexError
+                for i in range(-index - 1):
+                    node = node.prev
+            else:
+                node = self.head
+                for i in range(index):
+                    node = node.next
             return node
 
     def __iter__(self):
@@ -191,9 +248,12 @@ if __name__ == "__main__":
     linked_list.add(5)
     print(linked_list[:3])
     print(linked_list[3:])
+    print(linked_list[-1])
     node1 = Node(3)
     node2 = Node(4)
     node1.next = node2
     print(node1 < node2)
-    linked_list[:2] = LinkedList(node1, 2)
+    linked_list[:2] = LinkedList(node1, linked_list.count_size(node1))
+    print(linked_list)
+    linked_list.extend(LinkedList(node1, linked_list.count_size(node1)))
     print(linked_list)
