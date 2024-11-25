@@ -63,11 +63,12 @@ class LinkedList:
 
     def add(self, data):
         if isinstance(data, Node):
-            node = data.copy()
+            node = data
             node.next = None
             node.prev = None
         else:
             node = Node(data)
+
         if self.head is None:
             self.head = node
             self.tail = node
@@ -75,8 +76,9 @@ class LinkedList:
             self.tail.next = node
             node.prev = self.tail
             self.tail = node
-            
+
         self.size += 1
+
 
     def extend(self, linked_list):
         if isinstance(linked_list, LinkedList):
@@ -174,38 +176,32 @@ class LinkedList:
             start = 0 if index.start is None else index.start
             stop = self.size if index.stop is None else index.stop
             step = 1 if index.step is None else index.step
+            
             if start < 0 or stop < 0 or step == 0:
                 raise IndexError
             if start >= self.size:
                 start = self.size
             if stop > self.size:
                 stop = self.size
+            
             result = LinkedList()
-            # if step == 1:
-            #     result.head = self[start]
-            #     result.head.prev = None
-            #     result.tail = self[stop-1]
-            #     if result.tail is not None:
-            #         result.tail.next = None
-            #     result.size = stop - start
-            # else:
-            for i in range(start, stop, step):
-                result.add(self[i])
+            current_index = 0
+            node = self.head
+            while node and current_index < stop:
+                if current_index >= start and (current_index - start) % step == 0:
+                    result.add(node.data)
+                node = node.next
+                current_index += 1
             return result
 
         elif isinstance(index, int):
-            if index >= self.size:
-                raise IndexError
             if index < 0:
-                node = self.tail
-                if -index > self.size:
-                    raise IndexError
-                for i in range(-index - 1):
-                    node = node.prev
-            else:
-                node = self.head
-                for i in range(index):
-                    node = node.next
+                index += self.size
+            if index < 0 or index >= self.size:
+                raise IndexError
+            node = self.head
+            for _ in range(index):
+                node = node.next
             return node
 
     def __iter__(self):
@@ -231,7 +227,7 @@ class LinkedList:
         while node:
             text += str(node) + ' '
             node = node.next
-        return f"[{", ".join(text.split())}]"
+        return f"[{', '.join(text.split())}]"
 
     # def __str__(self):
     #     text = ''

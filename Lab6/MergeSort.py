@@ -13,6 +13,8 @@
 # д) Виконати порiвняльний аналiз (з даними рiзного розмiру) всiх чотирьох варiантiв
 # алгоритму сортування злиттям вiдносно часу виконання, кiлькостi проведених
 # порiвнянь, операцiй“копiювань” та використаної пам’ятi.
+import numpy as np
+import matplotlib.pyplot as plt
 
 import time
 import sys
@@ -364,8 +366,9 @@ class MergeSort:
 if __name__ == '__main__':
     merge_sort = MergeSort()
     sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort, merge_sort.linked_list_merge_sort]
+    sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort]
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers']
-    numbers = [10]  # , 100, 1000, 10000, 100000
+    numbers = [i for i in range(10, 10000, 100)]  # , 1000, 10000, 100000
 
     tries = 50
 
@@ -373,13 +376,18 @@ if __name__ == '__main__':
     tp = dict()
     nm = dict()
 
-    for sort in sorts:
-        for typ in types:
+    for typ in types:
+        for sort in sorts:
+            nm["Time"] = []
+            nm["Equations"] = []
+            nm["Memory"] = []
+            nm["Copies"] = []
             for number in numbers:
                 tim = []
                 equations = []
                 memory = []
                 copies = []
+
                 for _ in range(tries):
                     if sort == merge_sort.linked_list_merge_sort:
                         rng = RandomLists(number, typ, linked_list=True)
@@ -391,30 +399,42 @@ if __name__ == '__main__':
                     memory.append(dct["Memory"])
                     copies.append(dct["Copies"])
                 # print(dct)
-                nm[str(number) + " Name"] = dct["Name"]
-                nm[str(number) + " Time"] = sum(tim) / len(tim)
-                nm[str(number) + " Equations"] = sum(equations) / len(equations)
-                nm[str(number) + " Memory"] = sum(memory) / len(memory)
-                nm[str(number) + " Copies"] = sum(copies) / len(copies)
-            tp[typ] = nm
-            print(nm)
-        print(tp)
-        break
-        srt[str(sort)] = tp
-        # print(srt)
-        break
-    for sort, types in srt.items():
-        print(sort)
-        for typ, numbs in types.items():
-            print(typ)
-            for num, val in numbs.items():
-                print(num, val)
-            print()
-        print()
-                    
+                nm["Name"] = dct["Name"]
+                if nm["Time"] == []:
+                    nm["Time"] = [sum(tim) / len(tim)]
+                else:
+                    nm["Time"] = nm["Time"] + [sum(tim) / len(tim)]
+                if nm["Equations"] == []:
+                    nm["Equations"] = [sum(equations) / len(equations)]
+                else:
+                    nm["Equations"] = nm["Equations"] + [sum(equations) / len(equations)]
+                if nm["Memory"] == []:
+                    nm["Memory"] = [sum(memory) / len(memory)]
+                else:
+                    nm["Memory"] = nm["Memory"] + [sum(memory) / len(memory)]
+                if nm["Copies"] == []:
+                    nm["Copies"] = [sum(copies) / len(copies)]
+                else:
+                    nm["Copies"] = nm["Copies"] + [sum(copies) / len(copies)]
+            # print(nm)
+            srt[str(sort.__name__)] = nm.copy()
+        tp[typ] = srt.copy()
+
+    plots = ["Time", "Equations", "Memory", "Copies"]
+    for types, srt in tp.items():
+        for plot in plots:
+            for sort, numbs in srt.items():
+                # print(numbs)
+                plt.plot(tp[typ][sort][plot], label=sort)
+            plt.title(types.upper())
+            plt.xlabel("Size")
+            plt.ylabel(plot)
+            plt.legend()
+            plt.savefig("./Lab6/Results/" + types + "_" + plot + "_" + str(len(sorts)) + "_" + "sorts" + ".png")
+            plt.clf()
 
 
-# lst = RandomLists(100000, 'random').list
+# lst = RandomLists(1000000, 'random').list
 # print(lst)
 # print(Converter.array_to_linked_list(lst))
 # print(merge_sort.recursive_merge_sort(lst, time_count=True, details_need=True))
