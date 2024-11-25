@@ -361,7 +361,30 @@ class MergeSort:
             linked_list[:] = result
 
         return result, to_return
-    
+
+
+def progressbar(ready, overal, estimated_time):
+    fullness = ready / overal
+
+    filled_up_Length = round(100 * fullness)
+    percentage = round(100 * fullness, 1)
+
+    bar = '=' * filled_up_Length + '-' * (100 - filled_up_Length)
+
+    if estimated_time == float("inf"):
+        etc = "N/A"
+    elif estimated_time // 60 < 1:
+        etc = f"{estimated_time:.2f} sec     "
+    elif estimated_time // 60 >= 1:
+        etc = f"{int(estimated_time // 60)} min, {estimated_time % 60:.2f} sec     "
+    elif estimated_time // 3600 >= 1:
+        etc = f"{int(estimated_time // 3600)} hours, {estimated_time % 3600:.2f} min     "
+
+    print(f'[{bar}] {percentage}% ETC: {etc}', flush=True, end='\r')
+    if ready == overal:
+        print(f'[{bar}] {percentage}% ETC: FINISHED                                                                                    ', flush=True, end='\r')
+        print()
+
 
 if __name__ == '__main__':
     merge_sort = MergeSort()
@@ -376,6 +399,10 @@ if __name__ == '__main__':
     tp = dict()
     nm = dict()
 
+    overal_steps = len(types) * len(sorts) * len(numbers) * tries
+    step = 0
+    estimated_time = float("inf")
+
     for typ in types:
         for sort in sorts:
             nm["Time"] = []
@@ -389,6 +416,8 @@ if __name__ == '__main__':
                 copies = []
 
                 for _ in range(tries):
+                    step += 1
+                    progressbar(step, overal_steps, estimated_time)
                     if sort == merge_sort.linked_list_merge_sort:
                         rng = RandomLists(number, typ, linked_list=True)
                     else:
@@ -400,6 +429,7 @@ if __name__ == '__main__':
                     copies.append(dct["Copies"])
                 # print(dct)
                 nm["Name"] = dct["Name"]
+                estimated_time = (sum(tim) / len(tim)) * (overal_steps - step)
                 if nm["Time"] == []:
                     nm["Time"] = [sum(tim) / len(tim)]
                 else:
