@@ -8,8 +8,8 @@ class Node:
         self.next = next
         self.prev = prev
 
-    def copy(self):
-        return cp(self)
+    # def copy(self):
+    #     return cp(self)
 
     # def deepcopy(self):
     #     return dcp(self)
