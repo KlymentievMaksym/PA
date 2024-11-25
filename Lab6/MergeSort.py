@@ -373,12 +373,12 @@ def progressbar(ready, overal, estimated_time):
 
     if estimated_time == float("inf"):
         etc = "N/A"
-    elif estimated_time // 60 < 1:
+    if estimated_time // 60 < 1:
         etc = f"{estimated_time:.2f} sec     "
-    elif estimated_time // 60 >= 1:
+    if estimated_time // 60 >= 1:
         etc = f"{int(estimated_time // 60)} min, {estimated_time % 60:.2f} sec     "
-    elif estimated_time // 3600 >= 1:
-        etc = f"{int(estimated_time // 3600)} hours, {estimated_time % 3600:.2f} min     "
+    if estimated_time // 3600 >= 1:
+        etc = f"{int(estimated_time // 3600)} hours, {estimated_time % 3600 // 60:.2f} min     "
 
     print(f'[{bar}] {percentage}% ETC: {etc}', flush=True, end='\r')
     if ready == overal:
@@ -389,9 +389,9 @@ def progressbar(ready, overal, estimated_time):
 if __name__ == '__main__':
     merge_sort = MergeSort()
     sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort, merge_sort.linked_list_merge_sort]
-    sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort]
+    # sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort]
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers']
-    numbers = [i for i in range(10, 10000, 100)]  # , 1000, 10000, 100000
+    numbers = [i for i in range(1000, 10000, 100)]  # , 1000, 10000, 100000
 
     tries = 50
 
@@ -455,12 +455,12 @@ if __name__ == '__main__':
         for plot in plots:
             for sort, numbs in srt.items():
                 # print(numbs)
-                plt.plot(tp[typ][sort][plot], label=sort)
+                plt.plot(numbers, tp[typ][sort][plot], label=sort)
             plt.title(types.upper())
             plt.xlabel("Size")
             plt.ylabel(plot)
             plt.legend()
-            plt.savefig("./Lab6/Results/" + types + "_" + plot + "_" + str(len(sorts)) + "_" + "sorts" + ".png")
+            plt.savefig("./Lab6/Results/" + types + "_" + plot + "_" + str(len(sorts)) + "_" + "sorts" + "_" + str(len(numbers)) + "_" + "numbers" + "_" + str(tries) + ".png")
             plt.clf()
 
 

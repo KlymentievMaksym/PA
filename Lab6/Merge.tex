@@ -31,7 +31,11 @@
         \item Ітеративний з оптимiзацiями cutoff(-to-insertion), stop-if-already-sorted, eliminate-the-copy-to-the-auxiliary-array.
         \item Сотування злиттям для зв’язного списку
     \end{enumerate}
-    Також реалiзовано порiвняльний аналiз (з даними рiзного розмiру) всiх чотирьох варiантiв
+    \indent В моїй реалiзації Ітеративного сортування злиттям використовується менше порівнянь для реверсивно відсортованих списків.
+    \newline
+    \indent В моїй реалiзації Ітеративного сортування злиттям з оптимiзацiями массиви розміру між 80eA та 90eA, де eA --- 10 в степені A, сортуються не до кінця (Останні с елементів) через оптимізацію eliminate-the-copy-to-the-auxiliary-array.
+    \newline
+    \indent Також реалiзовано порiвняльний аналiз (з даними рiзного розмiру) всiх чотирьох варiантiв
     алгоритму сортування злиттям вiдносно часу виконання, кiлькостi проведених
     порiвнянь, операцiй "копiювань" та використаної пам’ятi. Окрім цього є показ на скільки відстотків обрахунки вже завершено.
     \newline
@@ -58,53 +62,119 @@
     \section{Converters}
     Converter --- клас, в якому реалiзовано конвертацiю масиву у зв’язний список та навпаки.
     \section{Comparisions and Results}
-        \indent Подивимося результати виконання. Розміри списків: від 10 до 10000 елементів з кроком в 100, тобто, якщо size = 10, то в списку будуть 1000 елементів.
+        Подивимося результати виконання. Розміри масивів: від 10 до 10000 елементів з кроком в 100.
         \newline
-        \indent \indent Спочатку для відсортованих списків:
         \newpage
-        \indent \indent \indent Час виконання:
+        \textbf{Спочатку для відсортованих масивів:}
         \newline
-            \includegraphics[scale=0.5]{sorted_Time_4_sorts.png}
-            \includegraphics[scale=0.5]{sorted_Time_3_sorts.png}
+        Час виконання:
         \newline
-        \indent \indent \indent Кiлькiсть проведених порiвнянь:
+            \includegraphics[scale=0.5]{sorted_Time_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{sorted_Time_3_sorts_90_numbers_50.png}
         \newline
-            \includegraphics[scale=0.5]{sorted_Equations_4_sorts.png}
-            \includegraphics[scale=0.5]{sorted_Equations_3_sorts.png}
-        \newpage
-        \indent \indent \indent Операцiї "копiювань":
+        Кiлькiсть проведених порiвнянь:
         \newline
-            \includegraphics[scale=0.5]{sorted_Copies_4_sorts.png}
-            \includegraphics[scale=0.5]{sorted_Copies_3_sorts.png}
-        \newline
-        \indent \indent \indent Використано пам’ятi:
-        \newline
-            \includegraphics[scale=0.5]{sorted_Memory_4_sorts.png}
-            \includegraphics[scale=0.5]{sorted_Memory_3_sorts.png}
-        \newpage
-        \indent \indent Потім для списків випадкових значень:
-        \newline
-        \indent \indent \indent Час виконання:
-        \newline
-            \includegraphics[scale=0.5]{random_Time_4_sorts.png}
-            \includegraphics[scale=0.5]{random_Time_3_sorts.png}
-        \newline
-        \indent \indent \indent Кiлькiсть проведених порiвнянь:
-        \newline
-            \includegraphics[scale=0.5]{random_Equations_4_sorts.png}
-            \includegraphics[scale=0.5]{random_Equations_3_sorts.png}
+            \includegraphics[scale=0.5]{sorted_Equations_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{sorted_Equations_3_sorts_90_numbers_50.png}
         \newpage
         Операцiї "копiювань":
         \newline
-            \includegraphics[scale=0.5]{random_Copies_4_sorts.png}
-            \includegraphics[scale=0.5]{random_Copies_3_sorts.png}
+            \includegraphics[scale=0.5]{sorted_Copies_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{sorted_Copies_3_sorts_90_numbers_50.png}
         \newline
         Використано пам’ятi:
         \newline
-            \includegraphics[scale=0.5]{random_Memory_4_sorts.png}
-            \includegraphics[scale=0.5]{random_Memory_3_sorts.png}
+            \includegraphics[scale=0.5]{sorted_Memory_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{sorted_Memory_3_sorts_90_numbers_50.png}
+        \newpage
+        \textbf{Потім для масивів випадкових значень:} 
         \newline
-
+        Час виконання:
+        \newline
+            \includegraphics[scale=0.5]{random_Time_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{random_Time_3_sorts_90_numbers_50.png}
+        \newline
+        Кiлькiсть проведених порiвнянь:
+        \newline
+            \includegraphics[scale=0.5]{random_Equations_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{random_Equations_3_sorts_90_numbers_50.png}
+        \newpage
+        Операцiї "копiювань":
+        \newline
+            \includegraphics[scale=0.5]{random_Copies_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{random_Copies_3_sorts_90_numbers_50.png}
+        \newline
+        Використано пам’ятi:
+        \newline
+            \includegraphics[scale=0.5]{random_Memory_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{random_Memory_3_sorts_90_numbers_50.png}
+        \newpage
+        \textbf{Масив майже відсортованих значень:}
+        \newline
+        Час виконання:
+        \newline
+            \includegraphics[scale=0.5]{almostsorted_Time_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{almostsorted_Time_3_sorts_90_numbers_50.png}
+        \newline
+        Кiлькiсть проведених порiвнянь:
+        \newline
+            \includegraphics[scale=0.5]{almostsorted_Equations_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{almostsorted_Equations_3_sorts_90_numbers_50.png}
+        \newpage
+        Операцiї "копiювань":
+        \newline
+            \includegraphics[scale=0.5]{almostsorted_Copies_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{almostsorted_Copies_3_sorts_90_numbers_50.png}
+        \newline
+        Використано пам’ятi:
+        \newline
+            \includegraphics[scale=0.5]{almostsorted_Memory_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{almostsorted_Memory_3_sorts_90_numbers_50.png}
+        \newpage
+        \textbf{Масив відсортованих значень у зворотному порядку:}
+        \newline
+        Час виконання:
+        \newline
+            \includegraphics[scale=0.5]{reverse_Time_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{reverse_Time_3_sorts_90_numbers_50.png}
+        \newline
+        Кiлькiсть проведених порiвнянь:
+        \newline
+            \includegraphics[scale=0.5]{reverse_Equations_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{reverse_Equations_3_sorts_90_numbers_50.png}
+        \newpage
+        Операцiї "копiювань":
+        \newline
+            \includegraphics[scale=0.5]{reverse_Copies_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{reverse_Copies_3_sorts_90_numbers_50.png}
+        \newline
+        Використано пам’ятi:
+        \newline
+            \includegraphics[scale=0.5]{reverse_Memory_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{reverse_Memory_3_sorts_90_numbers_50.png}
+        \newpage
+        \textbf{Масив тільки з декiлькома рiзними значень:}
+        \newline
+        Час виконання:
+        \newline
+            \includegraphics[scale=0.5]{somenumbers_Time_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{somenumbers_Time_3_sorts_90_numbers_50.png}
+        \newline
+        Кiлькiсть проведених порiвнянь:
+        \newline
+            \includegraphics[scale=0.5]{somenumbers_Equations_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{somenumbers_Equations_3_sorts_90_numbers_50.png}
+        \newpage
+        Операцiї "копiювань":
+        \newline
+            \includegraphics[scale=0.5]{somenumbers_Copies_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{somenumbers_Copies_3_sorts_90_numbers_50.png}
+        \newline
+        Використано пам’ятi:
+        \newline
+            \includegraphics[scale=0.5]{somenumbers_Memory_4_sorts_90_numbers_50.png}
+            \includegraphics[scale=0.5]{somenumbers_Memory_3_sorts_90_numbers_50.png}
+        \newpage
 \end{document}
 
 % 4. Оформлення результатiв роботи та звiту
