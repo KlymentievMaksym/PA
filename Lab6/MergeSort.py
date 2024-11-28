@@ -365,6 +365,7 @@ class MergeSort:
 
 def progressbar(ready, overal, estimated_time):
     fullness = ready / overal
+    txt_to_add = "                              "
 
     filled_up_Length = round(100 * fullness)
     percentage = round(100 * fullness, 1)
@@ -374,11 +375,13 @@ def progressbar(ready, overal, estimated_time):
     if estimated_time == float("inf"):
         etc = "N/A"
     if estimated_time // 60 < 1:
-        etc = f"{estimated_time:.2f} sec     "
+        etc = f"{estimated_time:.2f} sec"
     if estimated_time // 60 >= 1:
-        etc = f"{int(estimated_time // 60)} min, {estimated_time % 60:.2f} sec     "
+        etc = f"{int(estimated_time // 60)} min, {estimated_time % 60:.0f} sec"
     if estimated_time // 3600 >= 1:
-        etc = f"{int(estimated_time // 3600)} hours, {estimated_time % 3600 // 60:.2f} min     "
+        etc = f"{int(estimated_time // 3600)} hours, {estimated_time % 3600 // 60:.0f} min"
+
+    etc += txt_to_add
 
     print(f'[{bar}] {percentage}% ETC: {etc}', flush=True, end='\r')
     if ready == overal:
@@ -389,11 +392,13 @@ def progressbar(ready, overal, estimated_time):
 if __name__ == '__main__':
     merge_sort = MergeSort()
     sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort, merge_sort.linked_list_merge_sort]
-    # sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort]
+    sorts = [merge_sort.recursive_merge_sort, merge_sort.iterative_merge_sort, merge_sort.iterative_cutoff_stop_eliminate_merge_sort]
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers']
-    numbers = [i for i in range(1000, 10000, 100)]  # , 1000, 10000, 100000
+    # numbers = [i for i in range(10000, 25000, 100)]  # i for i in range(1000, 10000, 100)
+    numbers = [100, 500, 1000, 10000, 50000, 100000]  # 100, 500, 1000, 10000, 50000, 100000
 
     tries = 50
+
 
     srt = dict()
     tp = dict()
@@ -450,17 +455,29 @@ if __name__ == '__main__':
             srt[str(sort.__name__)] = nm.copy()
         tp[typ] = srt.copy()
 
-    plots = ["Time", "Equations", "Memory", "Copies"]
-    for types, srt in tp.items():
-        for plot in plots:
+    # for types, srt in tp.items():
+    #     for sort, numbs in srt.items():
+    #         print(types.upper())
+    #         print(sort)
+    #         print(numbs)
+    #         print()
+
+    plots = ["Time","Equations", "Memory", "Copies"]
+    for plot in plots:
+        for types, srt in tp.items():
             for sort, numbs in srt.items():
                 # print(numbs)
-                plt.plot(numbers, tp[typ][sort][plot], label=sort)
+                # print(types.upper())
+                # print(sort)
+                # print(tp[types][sort].keys())
+                # print(tp[types][sort][plot])
+                plt.plot(numbers, tp[types][sort][plot], label=sort)
             plt.title(types.upper())
             plt.xlabel("Size")
             plt.ylabel(plot)
             plt.legend()
-            plt.savefig("./Lab6/Results/" + types + "_" + plot + "_" + str(len(sorts)) + "_" + "sorts" + "_" + str(len(numbers)) + "_" + "numbers" + "_" + str(tries) + ".png")
+            # plt.show()
+            plt.savefig("./Lab6/Results/" + types + "_" + plot + "_" + str(len(sorts)) + "_" + "sorts" + "_" + str(len(numbers)) + "_" + "numbers" + "_" + str(tries) + "_" + str(min(numbers)) + "to" + str(max(numbers)) + ".png")
             plt.clf()
 
 
