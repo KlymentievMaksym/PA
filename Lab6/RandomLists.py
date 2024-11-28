@@ -17,18 +17,21 @@ class RandomLists:
             raise ValueError(f'Invalid type: {type}, excpected one of {list(self._TYPES.keys())}')
 
         self.n = n
+        if self.n <= 0:
+            raise ValueError(f'Invalid n: {self.n}, expected positive integer')
 
         linked_list = kwargs.get('linked_list', False)
         linked_list = kwargs.get('linlist', linked_list)
         linked_list = kwargs.get('llist', linked_list)
 
-        self.list = self._TYPES[type](*args)
+        self.list = self._TYPES[type](*args, **kwargs)
         if linked_list:
             self.list = Converter.array_to_linked_list(self.list)
     
     def sorted(self, *args, **kwargs):
-        random_start = random.randint(0, self.n)
-        random_step = random.randint(0, self.n)
+        start = kwargs.get('start', 0)
+        random_start = random.randint(start, self.n)
+        random_step = random.randint(start, self.n)
         n = 0
         to_return = []
         while n != self.n:
@@ -40,8 +43,8 @@ class RandomLists:
     def random(self, *args, **kwargs):
         return list(random.randint(0, self.n, self.n))
 
-    def almostsorted(self, disorder_level: float = 0.05):
-        to_return = self.sorted()
+    def almostsorted(self, disorder_level: float = 0.05, *args, **kwargs):
+        to_return = self.sorted(*args, **kwargs)
 
         num_swaps = int(disorder_level * self.n)
 
@@ -51,12 +54,17 @@ class RandomLists:
         return to_return
 
     def reverse(self, *args, **kwargs):
-        return self.sorted()[::-1]
+        return self.sorted(*args, **kwargs)[::-1]
 
     def somenumbers(self, range_start=1, range_end=5, *args, **kwargs):
         random_start = random.randint(0, self.n)
         random_step = random.randint(range_start, range_end)
         return list(random.randint(random_start, random_start + random_step, self.n))
+
+    def triangular(self, *args, **kwargs):
+        sorted = self.sorted(*args, **kwargs)
+        reversed = sorted[::-1]
+        return sorted[:self.n//2] + reversed[self.n//2:]
 
     def __str__(self):
         return str(self.list)
