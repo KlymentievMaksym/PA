@@ -17,7 +17,7 @@ class QuickSort:
 
     def _last_pivot(self, array):
         """Останній елемент (Невідсортований)"""
-        return -1
+        return len(array)-1
 
     def _random_pivot(self, array):
         """Випадковий елемент (Невідсортований)"""
@@ -73,29 +73,49 @@ class QuickSort:
         _memory += sys.getsizeof(j)
 
         _equations += 1
+        # print(f"i = {i}, j = {j}, pivot = {pivot}")
         if array[j] <= array[pivot]:
             i += 1
             if i != j:
                 _swaps += 1
                 self._swap(array, i, j)
 
-        while j < len(array) - 1:
+        # print("Entering while loop")
+
+        while j < len(array) - 2:
+            # print(f"i = {i}, j = {j}, pivot = {pivot}")
             j += 1
             _equations += 1
             if array[j] <= array[pivot]:
                 i += 1
                 if i != j:
                     _swaps += 1
+                    # print(f"i = {i}, SWAP = {array[i]}, j = {j}, SWAP = {array[j]}")
                     self._swap(array, i, j)
         i += 1
         _swaps += 1
+        # print(f"i = {i}, SWAP = {array[i]}, pivot = {pivot}, SWAP = {array[pivot]}")
         self._swap(array, i, pivot)
-        return array, _equations, _memory, _swaps
+        pivot = i
+        return array, pivot, _equations, _memory, _swaps
 
     def _hoar(self, array, pivot, _equations, _memory, _swaps):
         """Алгоритм швидкого сортування зi схемою розбиття Гоара"""
         return array, _equations, _memory, _swaps
 
+
+    def _recursive(self, array, scheme, pivot, _equations, _memory, _swaps):
+        result = array
+        if len(array) <= 1:
+            return array, _equations, _memory, _swaps
+
+        mid_index = pivot
+        _memory += sys.getsizeof(mid_index)
+        print(array[:mid_index], array[mid_index+1:])
+        # left, _equations, _memory, _swaps = self._recursive(array[:mid_index], scheme, pivot, _equations, _memory, _swaps)
+        # right, _equations, _memory, _swaps = self._recursive(array[mid_index:], scheme, pivot, _equations, _memory, _swaps)
+        # result, _equations, _memory, _swaps = scheme(result, pivot, _equations, _memory, _swaps)
+        return result, _equations, _memory, _swaps
 
     def standard_quicksort(self, array, scheme='lomute', pivot='last', time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _swaps=0):
         """а) Реалiзувати Алгоритм швидкого сортування (з пiдтримкою обчислення часу виконання, кiлькостi проведених порiвнянь, операцiй переставляння елементiв та використаної пам’ятi)."""
@@ -112,7 +132,9 @@ class QuickSort:
             start = time.time()
             _memory += sys.getsizeof(start)
 
-        result, _equations, _memory, _swaps = scheme(result, pivot, _equations, _memory, _swaps)
+        result, pivot, _equations, _memory, _swaps = scheme(result, pivot, _equations, _memory, _swaps)
+
+        result, _equations, _memory, _swaps = self._recursive(result, scheme, pivot, _equations, _memory, _swaps)
 
         if time_count:
             time_result = time.time() - start
@@ -131,6 +153,7 @@ if __name__ == "__main__":
     quick_sort = QuickSort()
     array = RandomLists(10, 'triangular', start=1)
     array = [3, 5, 8, 9, 4, 9, 7, 2, 6]
+    # array = [5, 4, 3]
     # print(array.list)
     # print(quick_sort.standard_quicksort(array.list, time_count=True, details_need=True))
     print(quick_sort.standard_quicksort(array, time_count=True, details_need=True))
