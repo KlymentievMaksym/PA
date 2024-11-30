@@ -54,7 +54,7 @@ class QuickSort:
         if pivot.upper() in self._PIVOT.keys():
             return self._PIVOT[pivot.upper()](array)
         else:
-            raise ValueError("Pivot can be only LAST, RANDOM, FIRST, MID or MID3")
+            raise ValueError("Pivot can be only LAST, RANDOM, MID or MID3")
 
     def _choose_scheme(self, scheme):
         """2 схеми розбиття"""
@@ -65,8 +65,8 @@ class QuickSort:
 
     def _lomute(self, array, pivot, _equations, _memory, _swaps):
         """Алгоритм швидкого сортування зi схемою розбиття Ломуто"""
-        if len(array) == 1:
-            return array, _equations, _memory, _swaps
+        if len(array) <= 1:
+            return array, pivot, _equations, _memory, _swaps
 
         i, j = -1, 0
         _memory += sys.getsizeof(i)
@@ -96,31 +96,175 @@ class QuickSort:
         _swaps += 1
         # print(f"i = {i}, SWAP = {array[i]}, pivot = {pivot}, SWAP = {array[pivot]}")
         self._swap(array, i, pivot)
-        pivot = i
-        return array, pivot, _equations, _memory, _swaps
+        new_pivot = i
+        return array, new_pivot, _equations, _memory, _swaps
 
-    def _hoar(self, array, pivot, _equations, _memory, _swaps):
+    def _hoar(self, array, pivot_type, _equations, _memory, _swaps, _depth=0):
         """Алгоритм швидкого сортування зi схемою розбиття Гоара"""
-        return array, _equations, _memory, _swaps
-
-
-    def _recursive(self, array, scheme, pivot, _equations, _memory, _swaps):
-        result = array
         if len(array) <= 1:
             return array, _equations, _memory, _swaps
+        if len(array) == 2:
+            if array[0] > array[1]:
+                _swaps += 1
+                self._swap(array, 0, 1)
+            return array, _equations, _memory, _swaps
+        pivot = self._choose_pivot(array, pivot_type)
+        t, i, j = array[pivot], 0, len(array)-1
+        while i < j:
+            if i == pivot:
+                i += 1
+            if j == pivot:
+                j -= 1
+            while array[i] < t and i < j:
+                _equations += 1
+                i += 1
+            while array[j] > t and i <= j:
+                _equations += 1
+                j -= 1
+            if i < j:
+                _swaps += 1
+                self._swap(array, i, j)
+        array[:j], _equations, _memory, _swaps = self._hoar(array[:j], pivot_type, _equations, _memory, _swaps, _depth + 1)
+        array[j+1:], _equations, _memory, _swaps = self._hoar(array[j+1:], pivot_type, _equations, _memory, _swaps, _depth + 1)
 
-        mid_index = pivot
-        _memory += sys.getsizeof(mid_index)
-        print(array[:mid_index], array[mid_index+1:])
-        # left, _equations, _memory, _swaps = self._recursive(array[:mid_index], scheme, pivot, _equations, _memory, _swaps)
-        # right, _equations, _memory, _swaps = self._recursive(array[mid_index:], scheme, pivot, _equations, _memory, _swaps)
-        # result, _equations, _memory, _swaps = scheme(result, pivot, _equations, _memory, _swaps)
-        return result, _equations, _memory, _swaps
+        return array, _equations, _memory, _swaps
+        # , start=None, end=None
+        # if start is None:
+        #     start = 0
+        # if end is None:
+        #     end = len(array) - 1
 
-    def standard_quicksort(self, array, scheme='lomute', pivot='last', time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _swaps=0):
+        # if start >= end:
+        #     return array, _equations, _memory, _swaps
+
+        # if end - start == 1:
+        #     if array[start] > array[end]:
+        #         _swaps += 1
+        #         self._swap(array, start, end)
+        #     return array, _equations, _memory, _swaps
+
+        # using_area = array[start:end+1]
+
+        # pivot = self._choose_pivot(using_area, pivot_type)
+        # print(f"array = {array}, pivot = {pivot}, start = {start}, end = {end}, _depth = {_depth}")
+
+        # r = using_area[pivot]
+        # _memory += sys.getsizeof(r)
+        # i = start
+        # _memory += sys.getsizeof(i)
+        # j = end
+        # _memory += sys.getsizeof(j)
+
+        # new_pivot = pivot
+        # swap_was = False
+        # while i < j:
+        #     print(f"r = {r}, i = {i}, j = {j}")
+        #     while array[i] <= r and i < j:
+        #         _equations += 1
+        #         i += 1
+        #     _equations += 1
+        #     while array[j] > r and i < j:
+        #         _equations += 1
+        #         j -= 1
+        #     _equations += 1
+        #     if i < j:
+        #         _swaps += 1
+        #         self._swap(array, i, j)
+        #         swap_was = True
+
+        # print(f"i = {i}, j = {j}, r = {r}")
+
+        # # if i > start:
+        # #     _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, start, i - 1, _depth + 1)
+        # # if j < end:
+        # #     _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, j + 1, end, _depth + 1)
+
+        # if swap_was:
+        #     array, _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, start, i - 1, _depth + 1)
+        #     array, _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, j + 1, end, _depth + 1)
+        #     # _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, j + 1, end + 1, _depth + 1)
+
+        # return array, _equations, _memory, _swaps
+
+    #     t, i, j = array[pivot], 0, len(array)-1
+    #     _memory += sys.getsizeof(i)
+    #     _memory += sys.getsizeof(j)
+
+    #     while array[i] < t and i < j:
+    #         _equations += 1
+    #         i += 1
+    #     _equations += 1
+    #     while array[j] > t and i < j:
+    #         _equations += 1
+    #         j -= 1
+    #     _equations += 1
+    #     if i < j:
+    #         _swaps += 1
+    #         self._swap(array, i, j)
+    #         while i < j:
+    #             while array[i] < t and i < j:
+    #                 _equations += 1
+    #                 i += 1
+    #             _equations += 1
+    #             while array[j] > t and i < j:
+    #                 _equations += 1
+    #                 j -= 1
+    #             _equations += 1
+    #             if i < j:
+    #                 _swaps += 1
+    #                 self._swap(array, i, j)
+
+
+    #     new_pivot = j
+    #     return array, new_pivot, _equations, _memory, _swaps
+
+
+    # def _recursive(self, array, scheme, pivot, pivot_type, _equations, _memory, _swaps):
+    #     print(f"Array: {array}, pivot: {pivot}")
+    #     array, pivot, _equations, _memory, _swaps = scheme(array, pivot, _equations, _memory, _swaps)
+    #     print(f"Array: {array}, pivot: {pivot}, pivot_type: {pivot_type}")
+    #     if len(array) <= 1:
+    #         return array, _equations, _memory, _swaps
+
+    #     mid_index = pivot
+    #     _memory += sys.getsizeof(mid_index)
+
+    #     left = array[:mid_index]
+    #     _memory += sys.getsizeof(left)
+    #     if len(left) > 2:
+    #         pivot_left = self._choose_pivot(left, pivot_type)
+    #         _memory += sys.getsizeof(pivot_left)
+
+    #         # print(f"Left: {left}")
+    #         left, _equations, _memory, _swaps = self._recursive(left, scheme, pivot_left, pivot_type, _equations, _memory, _swaps)
+    #         # print(f"Left: {left}")
+    #     elif len(left) == 2:
+    #         if left[0] > left[1]:
+    #             self._swap(left, 0, 1)
+    #             _swaps += 1
+
+    #     right = array[mid_index+1:]
+    #     _memory += sys.getsizeof(right)
+    #     if len(right) > 2:
+    #         pivot_right = self._choose_pivot(right, pivot_type)
+    #         _memory += sys.getsizeof(pivot_right)
+
+    #         # print(f"Right: {right}")
+    #         right, _equations, _memory, _swaps = self._recursive(right, scheme, pivot_right, pivot_type, _equations, _memory, _swaps)
+    #         # print(f"Right: {right}")
+    #     elif len(right) == 2:
+    #         if right[0] > right[1]:
+    #             self._swap(right, 0, 1)
+    #             _swaps += 1
+    #     print(f"Array: {array}, pivot: {pivot}, pivot_type: {pivot_type}, left: {left}, right: {right}")
+    #     result = left + [array[mid_index]] + right
+
+    #     return result, _equations, _memory, _swaps
+
+    def standard_quicksort(self, array, scheme_type='lomute', pivot_type='last', time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _swaps=0):
         """а) Реалiзувати Алгоритм швидкого сортування (з пiдтримкою обчислення часу виконання, кiлькостi проведених порiвнянь, операцiй переставляння елементiв та використаної пам’ятi)."""
-        pivot = self._choose_pivot(array, pivot)
-        scheme = self._choose_scheme(scheme)
+        pivot = self._choose_pivot(array, pivot_type)
+        scheme = self._choose_scheme(scheme_type)
 
         if inplace:
             result = array
@@ -132,17 +276,19 @@ class QuickSort:
             start = time.time()
             _memory += sys.getsizeof(start)
 
-        result, pivot, _equations, _memory, _swaps = scheme(result, pivot, _equations, _memory, _swaps)
-
-        result, _equations, _memory, _swaps = self._recursive(result, scheme, pivot, _equations, _memory, _swaps)
+        # result, _equations, _memory, _swaps = self._recursive(result, scheme, pivot, pivot_type, _equations, _memory, _swaps)
+        result, _equations, _memory, _swaps = scheme(result, pivot_type, _equations, _memory, _swaps)
 
         if time_count:
             time_result = time.time() - start
             _memory += sys.getsizeof(time_result)
-            to_return = {"Time": time_result, "Equations": _equations, "Memory": _memory, "Swaps": _swaps, "Name": "StandardQuicksort"}
+            to_return = {"Time": time_result, "Equations": _equations, "Memory": _memory, "Swaps": _swaps, "Name": scheme_type.capitalize() + pivot_type.capitalize()}
         else:
-            to_return = {"Equations": _equations, "Memory": _memory, "Swaps": _swaps, "Name": "StandardQuicksort"}
-        
+            to_return = {"Equations": _equations, "Memory": _memory, "Swaps": _swaps, "Name": scheme_type.capitalize() + pivot_type.capitalize()}
+
+        if inplace:
+            array[:] = result
+
         if details_need:
             return result, to_return
 
@@ -151,9 +297,13 @@ class QuickSort:
 
 if __name__ == "__main__":
     quick_sort = QuickSort()
-    array = RandomLists(10, 'triangular', start=1)
-    array = [3, 5, 8, 9, 4, 9, 7, 2, 6]
+    # array = RandomLists(10, 'triangular', start=1)
+    # print(quick_sort.standard_quicksort(array.list, scheme_type='hoar', pivot_type='last', time_count=True, details_need=True))
+    array = [9, 3, 5, 8, 9, 4, 9, 7, 2, 6]
+    # array = [3, 3, 3, 4, 3, 3, 3, 3, 3]
+    # array = [7, 2, 1, 8, 6, 3, 5, 4]
     # array = [5, 4, 3]
     # print(array.list)
     # print(quick_sort.standard_quicksort(array.list, time_count=True, details_need=True))
-    print(quick_sort.standard_quicksort(array, time_count=True, details_need=True))
+    # LAST, RANDOM, MID or MID3 .list
+    print(quick_sort.standard_quicksort(array, scheme_type='hoar', pivot_type='last', time_count=True, details_need=True))
