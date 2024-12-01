@@ -40,7 +40,7 @@ class QuickSort:
         mid3 = []
         mid3_indexes = []
         for i in range(3):
-            mid3_indexes.append(random.randint(0, len(array)))
+            mid3_indexes.append(random.randint(0, len(array_copy)))
             mid3.append(array_copy.pop(mid3_indexes[i]))
         for i in range(3):
             for j in range(i+1, 3):
@@ -270,7 +270,7 @@ if __name__ == "__main__":
     quick_sort = QuickSort()
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers', 'triangular']
     pivots = ['last', 'random', 'mid', 'mid3']
-    sorts = ['lomute', 'hoar']
+    sorts = ['lomute']  # , 'hoar'
     numbers = [10]
 
     for sort in sorts:
@@ -292,5 +292,4 @@ if __name__ == "__main__":
     # array = [7, 2, 1, 8, 6, 3, 5, 4]
     # array = [5, 4, 3]
     # array = [9, 5, 1, 0, 6, 3, 1, 1, 1, 4]
-    # print(quick_sort.standard_quicksort(array.list, time_count=True, details_need=True))
-    # print(quick_sort.standard_quicksort(array, scheme_type='lomute', pivot_type='random', time_count=True, details_need=True))
+    # print(quick_sort.standard_quicksort(array, scheme_type='lomute', pivot_type='mid3', time_count=True, details_need=True))
