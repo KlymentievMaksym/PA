@@ -65,17 +65,26 @@ class QuickSort:
 
     def _lomute(self, array, pivot_type, _equations, _memory, _swaps):
         """Алгоритм швидкого сортування зi схемою розбиття Ломуто"""
-        pivot = self._choose_pivot(array, pivot_type)
+        
+        if len(array) == 2:
+            if array[0] > array[1]:
+                _swaps += 1
+                self._swap(array, 0, 1)
+            return array, _equations, _memory, _swaps
+
         if len(array) <= 1:
             return array, _equations, _memory, _swaps
 
+        pivot = self._choose_pivot(array, pivot_type)
+
+        array_pivot = array.pop(pivot)
         i, j = -1, 0
         _memory += sys.getsizeof(i)
         _memory += sys.getsizeof(j)
 
         _equations += 1
         # print(f"i = {i}, j = {j}, pivot = {pivot}")
-        if array[j] <= array[pivot]:
+        if array[j] <= array_pivot:
             i += 1
             if i != j:
                 _swaps += 1
@@ -83,20 +92,21 @@ class QuickSort:
 
         # print("Entering while loop")
 
-        while j < len(array) - 2:
+        while j < len(array) - 1:
             # print(f"i = {i}, j = {j}, pivot = {pivot}")
             j += 1
             _equations += 1
-            if array[j] <= array[pivot]:
+            if array[j] <= array_pivot:
                 i += 1
                 if i != j:
                     _swaps += 1
                     # print(f"i = {i}, SWAP = {array[i]}, j = {j}, SWAP = {array[j]}")
                     self._swap(array, i, j)
+        array.append(array_pivot)
         i += 1
         _swaps += 1
         # print(f"i = {i}, SWAP = {array[i]}, pivot = {pivot}, SWAP = {array[pivot]}")
-        self._swap(array, i, pivot)
+        self._swap(array, i, -1)
 
         array[:i], _equations, _memory, _swaps = self._lomute(array[:i], pivot_type, _equations, _memory, _swaps)
         array[i+1:], _equations, _memory, _swaps = self._lomute(array[i+1:], pivot_type, _equations, _memory, _swaps)
@@ -258,14 +268,29 @@ class QuickSort:
 
 if __name__ == "__main__":
     quick_sort = QuickSort()
+    types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers', 'triangular']
+    pivots = ['last', 'random', 'mid', 'mid3']
+    sorts = ['lomute', 'hoar']
+    numbers = [10]
+
+    for sort in sorts:
+        for pivot in pivots:
+            for typ in types:
+                for number in numbers:
+                    array = RandomLists(number, typ, disorder_level=0.4, start=1)
+                    print(quick_sort.standard_quicksort(array.list, scheme_type=sort, pivot_type=pivot, time_count=True, details_need=True))
+
     # sorted, random, almostsorted, reverse, somenumbers, triangular
-    array = RandomLists(10, 'random', disorder_level=0.4, start=0)
-    # print(array.list)
     # LAST, RANDOM, MID or MID3 .list
-    print(quick_sort.standard_quicksort(array.list, scheme_type='lomute', pivot_type='last', time_count=True, details_need=True))
+
+    # array = RandomLists(10, 'triangular', disorder_level=0.4, start=1)
+    # print(array.list
+    # print(quick_sort.standard_quicksort(array.list, scheme_type='lomute', pivot_type='mid', time_count=True, details_need=True))
+
     # array = [3, 5, 8, 9, 4, 9, 7, 2, 6]
     # array = [3, 3, 3, 4, 3, 3, 3, 3, 3]
     # array = [7, 2, 1, 8, 6, 3, 5, 4]
     # array = [5, 4, 3]
+    # array = [9, 5, 1, 0, 6, 3, 1, 1, 1, 4]
     # print(quick_sort.standard_quicksort(array.list, time_count=True, details_need=True))
-    # print(quick_sort.standard_quicksort(array, scheme_type='hoar', pivot_type='last', time_count=True, details_need=True))
+    # print(quick_sort.standard_quicksort(array, scheme_type='lomute', pivot_type='random', time_count=True, details_need=True))
