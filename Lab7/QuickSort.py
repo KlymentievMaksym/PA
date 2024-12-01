@@ -79,33 +79,29 @@ class QuickSort:
 
         array_pivot = array.pop(pivot)
         i, j = -1, 0
+        _memory += sys.getsizeof(array_pivot)
         _memory += sys.getsizeof(i)
         _memory += sys.getsizeof(j)
 
         _equations += 1
-        # print(f"i = {i}, j = {j}, pivot = {pivot}")
         if array[j] <= array_pivot:
             i += 1
             if i != j:
                 _swaps += 1
                 self._swap(array, i, j)
 
-        # print("Entering while loop")
 
         while j < len(array) - 1:
-            # print(f"i = {i}, j = {j}, pivot = {pivot}")
             j += 1
             _equations += 1
             if array[j] <= array_pivot:
                 i += 1
                 if i != j:
                     _swaps += 1
-                    # print(f"i = {i}, SWAP = {array[i]}, j = {j}, SWAP = {array[j]}")
                     self._swap(array, i, j)
         array.append(array_pivot)
         i += 1
         _swaps += 1
-        # print(f"i = {i}, SWAP = {array[i]}, pivot = {pivot}, SWAP = {array[pivot]}")
         self._swap(array, i, -1)
 
         array[:i], _equations, _memory, _swaps = self._lomute(array[:i], pivot_type, _equations, _memory, _swaps)
@@ -117,120 +113,41 @@ class QuickSort:
         """Алгоритм швидкого сортування зi схемою розбиття Гоара"""
         if len(array) <= 1:
             return array, _equations, _memory, _swaps
+
         if len(array) == 2:
             if array[0] > array[1]:
                 _swaps += 1
                 self._swap(array, 0, 1)
             return array, _equations, _memory, _swaps
+
         pivot = self._choose_pivot(array, pivot_type)
-        t, i, j = array[pivot], 0, len(array)-1
+
+        t = array.pop(pivot)
+        i, j = 0, len(array)-1
+
         while i < j:
-            if i == pivot:
-                i += 1
-            if j == pivot:
-                j -= 1
-            while array[i] < t and i < j:
+            while array[i] <= t and i < j:
                 _equations += 1
                 i += 1
-            while array[j] > t and i <= j:
+            _equations += 1
+            while array[j] > t and i < j:
                 _equations += 1
                 j -= 1
+            _equations += 1
             if i < j:
                 _swaps += 1
                 self._swap(array, i, j)
+        _equations += 1
+        if j == len(array) - 1 and array[j] <= t:
+            array.append(t)
+            j += 1
+        else:
+            array.insert(j, t)
+
         array[:j], _equations, _memory, _swaps = self._hoar(array[:j], pivot_type, _equations, _memory, _swaps, _depth + 1)
         array[j+1:], _equations, _memory, _swaps = self._hoar(array[j+1:], pivot_type, _equations, _memory, _swaps, _depth + 1)
 
         return array, _equations, _memory, _swaps
-        # , start=None, end=None
-        # if start is None:
-        #     start = 0
-        # if end is None:
-        #     end = len(array) - 1
-
-        # if start >= end:
-        #     return array, _equations, _memory, _swaps
-
-        # if end - start == 1:
-        #     if array[start] > array[end]:
-        #         _swaps += 1
-        #         self._swap(array, start, end)
-        #     return array, _equations, _memory, _swaps
-
-        # using_area = array[start:end+1]
-
-        # pivot = self._choose_pivot(using_area, pivot_type)
-        # print(f"array = {array}, pivot = {pivot}, start = {start}, end = {end}, _depth = {_depth}")
-
-        # r = using_area[pivot]
-        # _memory += sys.getsizeof(r)
-        # i = start
-        # _memory += sys.getsizeof(i)
-        # j = end
-        # _memory += sys.getsizeof(j)
-
-        # new_pivot = pivot
-        # swap_was = False
-        # while i < j:
-        #     print(f"r = {r}, i = {i}, j = {j}")
-        #     while array[i] <= r and i < j:
-        #         _equations += 1
-        #         i += 1
-        #     _equations += 1
-        #     while array[j] > r and i < j:
-        #         _equations += 1
-        #         j -= 1
-        #     _equations += 1
-        #     if i < j:
-        #         _swaps += 1
-        #         self._swap(array, i, j)
-        #         swap_was = True
-
-        # print(f"i = {i}, j = {j}, r = {r}")
-
-        # # if i > start:
-        # #     _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, start, i - 1, _depth + 1)
-        # # if j < end:
-        # #     _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, j + 1, end, _depth + 1)
-
-        # if swap_was:
-        #     array, _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, start, i - 1, _depth + 1)
-        #     array, _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, j + 1, end, _depth + 1)
-        #     # _equations, _memory, _swaps = self._hoar(array, pivot_type, _equations, _memory, _swaps, j + 1, end + 1, _depth + 1)
-
-        # return array, _equations, _memory, _swaps
-
-    #     t, i, j = array[pivot], 0, len(array)-1
-    #     _memory += sys.getsizeof(i)
-    #     _memory += sys.getsizeof(j)
-
-    #     while array[i] < t and i < j:
-    #         _equations += 1
-    #         i += 1
-    #     _equations += 1
-    #     while array[j] > t and i < j:
-    #         _equations += 1
-    #         j -= 1
-    #     _equations += 1
-    #     if i < j:
-    #         _swaps += 1
-    #         self._swap(array, i, j)
-    #         while i < j:
-    #             while array[i] < t and i < j:
-    #                 _equations += 1
-    #                 i += 1
-    #             _equations += 1
-    #             while array[j] > t and i < j:
-    #                 _equations += 1
-    #                 j -= 1
-    #             _equations += 1
-    #             if i < j:
-    #                 _swaps += 1
-    #                 self._swap(array, i, j)
-
-
-    #     new_pivot = j
-    #     return array, new_pivot, _equations, _memory, _swaps
 
     def standard_quicksort(self, array, scheme_type='lomute', pivot_type='last', time_count=False, details_need=False, inplace=False, _equations=0, _memory=0, _swaps=0):
         """а) Реалiзувати Алгоритм швидкого сортування (з пiдтримкою обчислення часу виконання, кiлькостi проведених порiвнянь, операцiй переставляння елементiв та використаної пам’ятi)."""
@@ -247,7 +164,6 @@ class QuickSort:
             start = time.time()
             _memory += sys.getsizeof(start)
 
-        # result, _equations, _memory, _swaps = self._recursive(result, scheme, pivot, pivot_type, _equations, _memory, _swaps)
         result, _equations, _memory, _swaps = scheme(result, pivot_type, _equations, _memory, _swaps)
 
         if time_count:
@@ -257,28 +173,97 @@ class QuickSort:
         else:
             to_return = {"Equations": _equations, "Memory": _memory, "Swaps": _swaps, "Name": scheme_type.capitalize() + pivot_type.capitalize()}
 
-        if inplace:
-            array[:] = result
-
         if details_need:
             return result, to_return
 
         return result
-        
+
+
+def progressbar(ready, overal, estimated_time):
+    fullness = ready / overal
+    txt_to_add = "                              "
+
+    filled_up_Length = round(100 * fullness)
+    percentage = round(100 * fullness, 1)
+
+    bar = '=' * filled_up_Length + '-' * (100 - filled_up_Length)
+
+    if estimated_time == float("inf"):
+        etc = "N/A"
+    if estimated_time // 60 < 1:
+        etc = f"{estimated_time:.2f} sec"
+    if estimated_time // 60 >= 1:
+        etc = f"{int(estimated_time // 60)} min, {estimated_time % 60:.0f} sec"
+    if estimated_time // 3600 >= 1:
+        etc = f"{int(estimated_time // 3600)} hours, {estimated_time % 3600 // 60:.0f} min"
+
+    etc += txt_to_add
+
+    print(f'[{bar}] {percentage}% ETC: {etc}', flush=True, end='\r')
+    if ready == overal:
+        print(f'[{bar}] {percentage}% ETC: FINISHED                                                                                    ', flush=True, end='\r')
+        print()
+
 
 if __name__ == "__main__":
     quick_sort = QuickSort()
+
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers', 'triangular']
     pivots = ['last', 'random', 'mid', 'mid3']
-    sorts = ['lomute']  # , 'hoar'
-    numbers = [10]
+    sorts = ['lomute', 'hoar']
+    numbers = [10, 20]
+    tries = 50
+
+    overal = len(types) * len(pivots) * len(sorts) * len(numbers) * tries
+    ready = 0
+    estimated_time = float("inf")
+
+    measurements = ["Time", "Equations", "Memory", "Swaps"]
+
+    srts = dict()
+    pvts = dict()
+    typs = dict()
+    nums = dict()
+    trs = dict()
 
     for sort in sorts:
         for pivot in pivots:
             for typ in types:
+                for measurement in measurements:
+                    nums[measurement] = []
+
                 for number in numbers:
-                    array = RandomLists(number, typ, disorder_level=0.4, start=1)
-                    print(quick_sort.standard_quicksort(array.list, scheme_type=sort, pivot_type=pivot, time_count=True, details_need=True))
+
+                    for measurement in measurements:
+                        trs[measurement] = []
+
+                    for _ in range(tries):
+                        array = RandomLists(number, typ)
+                        dct_of_result = quick_sort.standard_quicksort(array.list, scheme_type=sort, pivot_type=pivot, time_count=True, details_need=True)[1]
+                        progressbar(ready, overal, estimated_time)
+                        ready += 1
+
+                        for measurement in measurements:
+                            trs[measurement].append(dct_of_result[measurement])
+                    for measurement in measurements:
+                        nums[measurement].append(sum(trs[measurement]) / len(trs[measurement]))
+                    estimated_time = (overal - ready) * sum(trs[measurement]) / len(trs[measurement])
+
+                typs[typ] = nums.copy()
+            pvts[pivot] = typs.copy()
+        srts[sort] = pvts.copy()
+
+    for sort in sorts:
+        for pivot in pivots:
+            for typ in types:
+                for measurement in measurements:
+                    print(f"Type: {typ}, Pivot: {pivot}, Sort: {sort}, Measurement: {measurement}")
+                    print(srts[sort][pivot][typ][measurement])
+                    print()
+
+
+                    # array = RandomLists(number, typ, disorder_level=0.4, start=1)
+                    # print(quick_sort.standard_quicksort(array.list, scheme_type=sort, pivot_type=pivot, time_count=True, details_need=True))
 
     # sorted, random, almostsorted, reverse, somenumbers, triangular
     # LAST, RANDOM, MID or MID3 .list
@@ -292,4 +277,4 @@ if __name__ == "__main__":
     # array = [7, 2, 1, 8, 6, 3, 5, 4]
     # array = [5, 4, 3]
     # array = [9, 5, 1, 0, 6, 3, 1, 1, 1, 4]
-    # print(quick_sort.standard_quicksort(array, scheme_type='lomute', pivot_type='mid3', time_count=True, details_need=True))
+    # print(quick_sort.standard_quicksort(array, scheme_type='hoar', pivot_type='last', time_count=True, details_need=True))
