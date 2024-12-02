@@ -16,7 +16,7 @@ class QuickSort:
     def __init__(self):
         """Словники для вибору опорного елемента та схеми розбиття"""
         self._PIVOT = {'LAST': self._last_pivot, 'RANDOM': self._random_pivot, 'MID': self._mid_pivot, 'MID3': self._mid3_pivot}
-        self._SCHEME = {'LOMUTE': self._lomute, 'HOAR': self._hoar}
+        self._SCHEME = {'LOMUTE': self._lomute, 'HOAR': self._hoar, 'DIJKSTRA': self._dijkstra}
 
     def _swap(self, array, i, j):
         """Функцiя перестановки індексів двох елементiв"""
@@ -71,9 +71,7 @@ class QuickSort:
         else:
             raise ValueError("Scheme can be only LOMUTE or HOAR")
 
-    def _lomute(self, array, pivot_type, _equations, _memory, _swaps):
-        """Алгоритм швидкого сортування зi схемою розбиття Ломуто"""
-        
+    def _standard_check(self, array, _equations, _memory, _swaps):
         if len(array) == 2:
             if array[0] > array[1]:
                 _swaps += 1
@@ -82,6 +80,12 @@ class QuickSort:
 
         if len(array) <= 1:
             return array, _equations, _memory, _swaps
+
+    def _lomute(self, array, pivot_type, _equations, _memory, _swaps):
+        """Алгоритм швидкого сортування зi схемою розбиття Ломуто"""
+        _check = self._standard_check(array, _equations, _memory, _swaps)
+        if _check != None:
+            return _check
 
         pivot = self._choose_pivot(array, pivot_type)
 
@@ -119,18 +123,14 @@ class QuickSort:
 
     def _hoar(self, array, pivot_type, _equations, _memory, _swaps, _depth=0):
         """Алгоритм швидкого сортування зi схемою розбиття Гоара"""
-        if len(array) <= 1:
-            return array, _equations, _memory, _swaps
-
-        if len(array) == 2:
-            if array[0] > array[1]:
-                _swaps += 1
-                self._swap(array, 0, 1)
-            return array, _equations, _memory, _swaps
+        _check = self._standard_check(array, _equations, _memory, _swaps)
+        if _check != None:
+            return _check
 
         pivot = self._choose_pivot(array, pivot_type)
 
         t = array.pop(pivot)
+        # t = array[pivot]
         i, j = 0, len(array)-1
 
         _memory += sys.getsizeof(t)
@@ -150,6 +150,17 @@ class QuickSort:
                 _swaps += 1
                 self._swap(array, i, j)
         _equations += 1
+        # while array[i] <= t and i < j:
+        #     _equations += 1
+        #     i += 1
+        # _equations += 1
+        # while array[j] > t and i < j:
+        #     _equations += 1
+        #     j -= 1
+        # _equations += 1
+        # if i < j:
+        #     _swaps += 1
+        #     self._swap(array, i, j)
         if j == len(array) - 1 and array[j] <= t:
             array.append(t)
             j += 1
@@ -158,6 +169,60 @@ class QuickSort:
 
         array[:j], _equations, _memory, _swaps = self._hoar(array[:j], pivot_type, _equations, _memory, _swaps, _depth + 1)
         array[j+1:], _equations, _memory, _swaps = self._hoar(array[j+1:], pivot_type, _equations, _memory, _swaps, _depth + 1)
+
+        return array, _equations, _memory, _swaps
+
+    def _dijkstra(self, array, pivot_type, _equations, _memory, _swaps, _depth=0):
+        """Алгоритм швидкого сортування зi схемою 3-стороннього розбиття Дейкстра"""
+        _check = self._standard_check(array, _equations, _memory, _swaps)
+        if _check != None:
+            return _check
+
+        pivot = self._choose_pivot(array, pivot_type)
+
+        t = array[pivot]
+        i, j, k = 0, len(array)-1, 0
+
+        _memory += sys.getsizeof(t)
+        _memory += sys.getsizeof(i)
+        _memory += sys.getsizeof(j)
+        _memory += sys.getsizeof(k)
+
+        while k < j:
+            _equations += 3
+            if array[k] < t:
+                _equations -= 2
+                _swaps += 1
+                self._swap(array, i, k)
+                i += 1
+                k += 1
+            elif array[k] > t:
+                _equations -= 1
+                _swaps += 1
+                self._swap(array, k, j)
+                j -= 1
+            elif array[k] == t:
+                k += 1
+
+        _equations += 3
+        if array[k] < t:
+            _equations -= 2
+            _swaps += 1
+            self._swap(array, i, k)
+            i += 1
+            k += 1
+        elif array[k] > t:
+            _equations -= 1
+            _swaps += 1
+            self._swap(array, k, j)
+            j -= 1
+        elif array[k] == t:
+            k += 1
+
+        array[:i], _equations, _memory, _swaps = self._dijkstra(array[:i], pivot_type, _equations, _memory, _swaps, _depth + 1)
+        array[k:], _equations, _memory, _swaps = self._dijkstra(array[k:], pivot_type, _equations, _memory, _swaps, _depth + 1)
+
+        # print(f"i: {i}, j: {j}, k: {k}, t: {t}")
 
         return array, _equations, _memory, _swaps
 
@@ -192,7 +257,7 @@ class QuickSort:
             return result, to_return
 
         return result
-ф
+
 
 def progressbar(ready, overal, estimated_time):
     fullness = ready / overal
@@ -225,8 +290,10 @@ if __name__ == "__main__":
 
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers', 'triangular']
     pivots = ['last', 'random', 'mid', 'mid3']
-    sorts = ['lomute', 'hoar']
-    numbers = [100, 300, 500, 1000]
+    sorts = ['lomute', 'hoar', 'dijkstra']
+    # sorts = ['dijkstra']
+    numbers = [100, 300]  # , 500, 1000
+    # numbers = [10]
     tries = 50
 
     overal = len(types) * len(pivots) * len(sorts) * len(numbers) * tries
@@ -234,6 +301,7 @@ if __name__ == "__main__":
     estimated_time = float("inf")
 
     measurements = ["Time", "Equations", "Memory", "Swaps"]
+    measurements = ["Swaps"]
 
     srts = dict()
     pvts = dict()
@@ -248,6 +316,10 @@ if __name__ == "__main__":
                     nums[measurement] = []
 
                 for number in numbers:
+                    # for measurement in measurements:
+                    #     array = RandomLists(number, typ, disorder_level=0.4, start=1)
+                    #     print(quick_sort.standard_quicksort(array.list, scheme_type=sort, pivot_type=pivot, time_count=True, details_need=True))
+
 
                     for measurement in measurements:
                         trs[measurement] = []
@@ -262,7 +334,7 @@ if __name__ == "__main__":
                             trs[measurement].append(dct_of_result[measurement])
                     for measurement in measurements:
                         nums[measurement].append(sum(trs[measurement]) / len(trs[measurement]))
-                    estimated_time = (overal - ready) * sum(trs['Time']) / len(trs['Time'])
+                    # estimated_time = (overal - ready) * sum(trs['Time']) / len(trs['Time'])
 
                 typs[typ] = nums.copy()
             pvts[pivot] = typs.copy()
@@ -277,17 +349,13 @@ if __name__ == "__main__":
                 plt.ylabel(measurement)
                 plt.legend()
                 plt.title(f"Type: {typ}, Pivot: {pivot}")
-                # plt.show()
-                plt.savefig("./Lab7/Results/" + typ + "_" + measurement + "_" + str(len(sorts)) + "_" + "sorts" + "_" + str(len(numbers)) + "_" + "numbers" + "_" + str(tries) + "_" + str(min(numbers)) + "to" + str(max(numbers)) + ".png")
-                plt.clf()
 
-                    # print(f"Type: {typ}, Pivot: {pivot}, Sort: {sort}, Measurement: {measurement}")
-                    # print(srts[sort][pivot][typ][measurement])
-                    # print()
+                plt.show()
 
+    #             # plt.savefig("./Lab7/Results/" + typ + "_" + measurement + "_" + str(len(sorts)) + "_" + "sorts" + "_" + str(len(numbers)) + "_" + "numbers" + "_" + str(tries) + "_" + str(min(numbers)) + "to" + str(max(numbers)) + ".png")
+    #             # plt.clf()
 
-                    # array = RandomLists(number, typ, disorder_level=0.4, start=1)
-                    # print(quick_sort.standard_quicksort(array.list, scheme_type=sort, pivot_type=pivot, time_count=True, details_need=True))
+                    
 
     # sorted, random, almostsorted, reverse, somenumbers, triangular
     # LAST, RANDOM, MID or MID3 .list
@@ -297,6 +365,7 @@ if __name__ == "__main__":
     # print(quick_sort.standard_quicksort(array.list, scheme_type='lomute', pivot_type='mid', time_count=True, details_need=True))
 
     # array = [3, 5, 8, 9, 4, 9, 7, 2, 6]
+    # array = [6, 5, 8, 6, 4, 9, 7, 6, 3]
     # array = [3, 3, 3, 4, 3, 3, 3, 3, 3]
     # array = [7, 2, 1, 8, 6, 3, 5, 4]
     # array = [5, 4, 3]
