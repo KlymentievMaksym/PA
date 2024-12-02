@@ -1,7 +1,15 @@
 from numpy import random
+import matplotlib.pyplot as plt
+
 from RandomLists import RandomLists
 import time
 import sys
+import os
+
+sys.setrecursionlimit(1500)
+
+if not os.path.exists('./lab7/Results'):
+    os.mkdir('./lab7/Results')
 
 
 class QuickSort:
@@ -125,6 +133,10 @@ class QuickSort:
         t = array.pop(pivot)
         i, j = 0, len(array)-1
 
+        _memory += sys.getsizeof(t)
+        _memory += sys.getsizeof(i)
+        _memory += sys.getsizeof(j)
+
         while i < j:
             while array[i] <= t and i < j:
                 _equations += 1
@@ -154,6 +166,9 @@ class QuickSort:
         pivot = self._choose_pivot(array, pivot_type)
         scheme = self._choose_scheme(scheme_type)
 
+        _memory += sys.getsizeof(pivot)
+        _memory += sys.getsizeof(scheme)
+
         if inplace:
             result = array
         else:
@@ -177,7 +192,7 @@ class QuickSort:
             return result, to_return
 
         return result
-
+ф
 
 def progressbar(ready, overal, estimated_time):
     fullness = ready / overal
@@ -211,7 +226,7 @@ if __name__ == "__main__":
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers', 'triangular']
     pivots = ['last', 'random', 'mid', 'mid3']
     sorts = ['lomute', 'hoar']
-    numbers = [10, 20]
+    numbers = [100, 300, 500, 1000]
     tries = 50
 
     overal = len(types) * len(pivots) * len(sorts) * len(numbers) * tries
@@ -240,26 +255,35 @@ if __name__ == "__main__":
                     for _ in range(tries):
                         array = RandomLists(number, typ)
                         dct_of_result = quick_sort.standard_quicksort(array.list, scheme_type=sort, pivot_type=pivot, time_count=True, details_need=True)[1]
-                        progressbar(ready, overal, estimated_time)
                         ready += 1
+                        progressbar(ready, overal, estimated_time)
 
                         for measurement in measurements:
                             trs[measurement].append(dct_of_result[measurement])
                     for measurement in measurements:
                         nums[measurement].append(sum(trs[measurement]) / len(trs[measurement]))
-                    estimated_time = (overal - ready) * sum(trs[measurement]) / len(trs[measurement])
+                    estimated_time = (overal - ready) * sum(trs['Time']) / len(trs['Time'])
 
                 typs[typ] = nums.copy()
             pvts[pivot] = typs.copy()
         srts[sort] = pvts.copy()
 
-    for sort in sorts:
+    for measurement in measurements:
         for pivot in pivots:
             for typ in types:
-                for measurement in measurements:
-                    print(f"Type: {typ}, Pivot: {pivot}, Sort: {sort}, Measurement: {measurement}")
-                    print(srts[sort][pivot][typ][measurement])
-                    print()
+                for sort in sorts:
+                    plt.plot(numbers, srts[sort][pivot][typ][measurement], label=f"{sort}")
+                plt.xlabel("Size")
+                plt.ylabel(measurement)
+                plt.legend()
+                plt.title(f"Type: {typ}, Pivot: {pivot}")
+                # plt.show()
+                plt.savefig("./Lab7/Results/" + typ + "_" + measurement + "_" + str(len(sorts)) + "_" + "sorts" + "_" + str(len(numbers)) + "_" + "numbers" + "_" + str(tries) + "_" + str(min(numbers)) + "to" + str(max(numbers)) + ".png")
+                plt.clf()
+
+                    # print(f"Type: {typ}, Pivot: {pivot}, Sort: {sort}, Measurement: {measurement}")
+                    # print(srts[sort][pivot][typ][measurement])
+                    # print()
 
 
                     # array = RandomLists(number, typ, disorder_level=0.4, start=1)
