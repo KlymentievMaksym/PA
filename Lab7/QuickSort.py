@@ -322,9 +322,9 @@ def progressbar(ready, overal, estimated_time):
 
     etc += txt_to_add
 
-    print(f'[{bar}] {percentage}% ETC: {etc}', flush=True, end='\r')
+    print(f'[{bar}] {percentage}% ETA: {etc}', flush=True, end='\r')
     if ready == overal:
-        print(f'[{bar}] {percentage}% ETC: FINISHED                                                                                    ', flush=True, end='\r')
+        print(f'[{bar}] {percentage}% ETA: FINISHED                                                                                    ', flush=True, end='\r')
         print()
 
 
@@ -345,7 +345,7 @@ if __name__ == "__main__":
     pivots = ['last', 'random', 'mid', 'mid3']
     sorts = ['lomute', 'hoar', 'dijkstra', 'dual']
     # sorts = ['dijkstra']
-    numbers = [1*10**2, 3*10**2, 5*10**2, 10**3, 3*10**3, 5*10**3, 10**4]  # , 5*10**2, 10**3, 3*10**3, 5*10**3
+    numbers = [1*10**2, 3*10**2, 5*10**2, 10**3, 3*10**3, 5*10**3]  # , 5*10**2, 10**3, 3*10**3, 5*10**3, 10**4
     # numbers = [10]
     tries = 50
 
