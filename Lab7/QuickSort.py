@@ -62,7 +62,7 @@ class QuickSort:
             raise ValueError("Pivot can be only LAST, RANDOM, MID or MID3")
 
     def _choose_scheme(self, scheme):
-        """2 схеми розбиття"""
+        """4 схеми розбиття"""
         if scheme.upper() in self._SCHEME.keys():
             return self._SCHEME[scheme.upper()]
         else:
@@ -157,6 +157,8 @@ class QuickSort:
         else:
             array.insert(j, t)
 
+        # _memory += sys.getsizeof(array)
+
         array[:j], _equations, _memory, _swaps = self._hoar(array[:j], pivot_type, _equations, _memory, _swaps, _depth + 1)
         array[j+1:], _equations, _memory, _swaps = self._hoar(array[j+1:], pivot_type, _equations, _memory, _swaps, _depth + 1)
 
@@ -243,6 +245,7 @@ class QuickSort:
 
         array.insert(0, p1)
         array.append(p2)
+        # _memory += sys.getsizeof(array)
 
         _swaps += 2
         self._swap(array, 0, lessthan)
@@ -254,7 +257,7 @@ class QuickSort:
 
         return array, _equations, _memory, _swaps
 
-    def _insertion_sort(self, array, pivot_type, _equations, _memory, _swaps):
+    # def _insertion_sort(self, array, _equations, _memory, _swaps):
         for i in range(1, len(array)):
             key = array[i]
             j = i - 1
