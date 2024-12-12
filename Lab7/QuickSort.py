@@ -343,9 +343,11 @@ if __name__ == "__main__":
     #     }
     types = ['sorted', 'random', 'almostsorted', 'reverse', 'somenumbers', 'triangular']
     pivots = ['last', 'random', 'mid', 'mid3']
+    pivots = ['random', 'mid', 'mid3']
     sorts = ['lomute', 'hoar', 'dijkstra', 'dual']
     # sorts = ['dijkstra']
     numbers = [1*10**2, 3*10**2, 5*10**2, 10**3, 3*10**3, 5*10**3]  # , 5*10**2, 10**3, 3*10**3, 5*10**3, 10**4
+    numbers = [1*10**2, 3*10**2, 5*10**2, 10**3, 3*10**3, 5*10**3, 10**4]  # , 5*10**2, 10**3, 3*10**3, 5*10**3, 10**4
     # numbers = [10]
     tries = 50
 
@@ -412,7 +414,7 @@ if __name__ == "__main__":
 
             # plt.show()
 
-            plt.savefig("./Lab7/Results/" + typ + "_" + measurement + "_" + str(len(numbers)) + "_" + "numbers" + ".png")
+            plt.savefig("./Lab7/Results/" + typ + "_" + measurement + "_" + str(len(pivots)) + "_" + "pivots" + "_" + str(len(numbers)) + "_" + "numbers" + ".png")
             plt.clf()
 
                     
