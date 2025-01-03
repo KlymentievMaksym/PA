@@ -1,6 +1,11 @@
 *.coverage
 *.vscode*
 *pycache*
+
 *Merge.*
 !Merge.tex
 !Merge.pdf
+
+*Quick.*
+!Quick.tex
+!Quick.pdf
